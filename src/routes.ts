@@ -1,4 +1,4 @@
-import { Register } from './controller/auth.controller';
+import { Register } from "./controllers/auth.controller";
 import { Router } from "express";
 
 export const routes = (router: Router) => {
