@@ -21,6 +21,7 @@ export const myDataSource = new DataSource({
 const app = express();
 app.use(express.json());
 app.use(cors({
+    credentials: true,
     origin: [`${process.env.CORS_ORIGIN}`]
 }));
 
@@ -28,7 +29,7 @@ app.use(cors({
 myDataSource.initialize().then(() => {
     routes(app);
 
-    console.log("Data Source has been initialized!");
+    console.log("Database has been initialized!");
     app.listen(8000, () => {
         console.log('Server listening on port 8000');
     });
