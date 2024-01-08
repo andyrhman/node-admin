@@ -1,10 +1,10 @@
+require('dotenv').config();
 import express from 'express';
 import cors from 'cors';
 import { routes } from './routes';
 import { DataSource } from 'typeorm';
 import cookieParser from 'cookie-parser';
 
-require('dotenv').config();
 export const myDataSource = new DataSource({
     type: "postgres",
     host: process.env.POSTGRES_HOST,

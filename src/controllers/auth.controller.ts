@@ -6,7 +6,6 @@ import * as argon2 from 'argon2';
 import { User } from '../entity/user.entity';
 import { sign, verify } from 'jsonwebtoken';
 
-require('dotenv').config();
 // ? https://www.phind.com/agent?cache=clr3id9pk0002l907s609rc5r&source=sidebar
 export const Register = async (req: Request, res: Response) => {
     const body = req.body;
@@ -66,13 +65,16 @@ export const Login = async (req: Request, res: Response) => {
 
     const token = sign(
         { id: user.id },
-        `${process.env.JWT_SECRET}`,
+        process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
 
     res.cookie('user_session', token, {
         httpOnly: true,
-        maxAge: maxAge // Set the maxAge based on rememberMe
+        maxAge: maxAge, // Set the maxAge based on rememberMe
+        sameSite: 'strict',
+        // secure: process.env.NODE_ENV === 'production' // Set secure if in production
+        // domain: 'yourdomain.com', // If cookie was set with specific domain
     });
 
     return res.send({
@@ -81,18 +83,36 @@ export const Login = async (req: Request, res: Response) => {
 };
 
 export const AuthenticatedUser = async (req: Request, res: Response) => {
-    const jwt = req.cookies['user_session'];
+    try {
+        const jwt = req.cookies['user_session'];
 
-    const payload: any = verify(jwt, `${process.env.JWT_SECRET}`);
+        const payload: any = verify(jwt, process.env.JWT_SECRET);
 
-    if (!payload) {
+        if (!payload) {
+            return res.status(401).send({
+                message: "Unauthenticated"
+            });
+        };
+
+        const repository = myDataSource.getRepository(User);
+        const { password, ...user } = await repository.findOne({ where: { id: payload.id } });
+
+        res.send(user);
+    } catch (error) {
         return res.status(401).send({
             message: "Unauthenticated"
         });
-    };
+    }
+};
 
-    const repository  = myDataSource.getRepository(User);
-    const user = await repository.findOne({where: {id: payload.id}});
-
-    return res.send(user);
+export const Logout = async (req: Request, res: Response) => {
+    res.cookie('user_session', '', {
+        sameSite: 'strict',
+        maxAge: 0,
+        // secure: process.env.NODE_ENV === 'production' // Set secure if in production
+        // domain: 'yourdomain.com', // If cookie was set with specific domain
+    });
+    res.send({
+        message: "Success"
+    })
 };
