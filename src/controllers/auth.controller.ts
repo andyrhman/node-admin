@@ -1,11 +1,10 @@
-
-
+import { myDataSource } from './../index';
 import { Request, Response } from 'express';
 import { UserService } from '../services/auth.service';
 import { RegisterValidation } from '../validation/register.validation';
 import * as argon2 from 'argon2';
 import { User } from '../entity/user.entity';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 
 require('dotenv').config();
 // ? https://www.phind.com/agent?cache=clr3id9pk0002l907s609rc5r&source=sidebar
@@ -65,8 +64,11 @@ export const Login = async (req: Request, res: Response) => {
     const rememberMe = body.rememberMe; // Assuming rememberMe is sent as a boolean in the body
     const maxAge = rememberMe ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 1 year or 1 day
 
-    const payload = { id: user.id };
-    const token = sign(payload, 'secret', { expiresIn: '1d' }); // Update 'secret' with your actual secret key
+    const token = sign(
+        { id: user.id },
+        `${process.env.JWT_SECRET}`,
+        { expiresIn: '1d' }
+    );
 
     res.cookie('user_session', token, {
         httpOnly: true,
@@ -78,3 +80,19 @@ export const Login = async (req: Request, res: Response) => {
     });
 };
 
+export const AuthenticatedUser = async (req: Request, res: Response) => {
+    const jwt = req.cookies['user_session'];
+
+    const payload: any = verify(jwt, `${process.env.JWT_SECRET}`);
+
+    if (!payload) {
+        return res.status(401).send({
+            message: "Unauthenticated"
+        });
+    };
+
+    const repository  = myDataSource.getRepository(User);
+    const user = await repository.findOne({where: {id: payload.id}});
+
+    return res.send(user);
+};

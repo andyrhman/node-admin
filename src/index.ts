@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { routes } from './routes';
 import { DataSource } from 'typeorm';
+import cookieParser from 'cookie-parser';
 
 require('dotenv').config();
 export const myDataSource = new DataSource({
@@ -20,6 +21,7 @@ export const myDataSource = new DataSource({
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     credentials: true,
     origin: [`${process.env.CORS_ORIGIN}`]
