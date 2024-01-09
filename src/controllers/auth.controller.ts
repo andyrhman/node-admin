@@ -50,17 +50,31 @@ export const Login = async (req: Request, res: Response) => {
     // Check whether to find the user by email or username based on input.
     if (body.email) {
         user = await userService.findByEmail(body.email.toLowerCase());
-    } else {
+        if (!body.email) {
+            return res.status(404).send({
+                message: "Invalid credentials!"
+            });
+        }
+    } else if (body.username) {
         user = await userService.findByUsername(body.username.toLowerCase());
+        if (!body.username) {
+            return res.status(404).send({
+                message: "Invalid credentials!"
+            });
+        }
     }
-
+    
     if (!user) {
         return res.status(404).send({
             message: "Invalid credentials!"
         });
     }
 
-    if (!await argon2.verify(user.password, body.password)) {
+    if (!body.password) {
+        return res.status(400).send({
+            message: "Invalid credentials!"
+        });
+    }else if (!await argon2.verify(user.password, body.password)) {
         return res.status(400).send({
             message: "Invalid credentials!"
         });
@@ -143,11 +157,16 @@ export const UpdateInfo = async (req: Request, res: Response) => {
 export const UpdatePassword = async (req: Request, res: Response) => {
     const user = req["user"];
 
+
     if (req.body.password !== req.body.password_confirm) {
         return res.status(400).send({
             message: "Password do not match"
         });
-    };
+    }else if (!req.body.password || !req.body.password_confirm) {
+        return res.status(400).send({
+            message: "Password do not match"
+        });
+    }
 
     const repository = myDataSource.getRepository(User);
 
