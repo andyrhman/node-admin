@@ -150,7 +150,6 @@ export const UpdateInfo = async (req: Request, res: Response) => {
     await userService.update(user.id, existingUser);
 
     const { password, ...data } = await userService.findOne({ where: { id: user.id } });
-
     res.send(data);
 };
 
