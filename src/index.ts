@@ -4,6 +4,7 @@ import cors from 'cors';
 import { routes } from './routes';
 import { DataSource } from 'typeorm';
 import cookieParser from 'cookie-parser';
+import { ValidationMiddleware } from './middleware/validation.middleware';
 
 export const myDataSource = new DataSource({
     type: "postgres",
@@ -22,6 +23,7 @@ export const myDataSource = new DataSource({
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(ValidationMiddleware);
 app.use(cors({
     credentials: true,
     origin: [`${process.env.CORS_ORIGIN}`]
