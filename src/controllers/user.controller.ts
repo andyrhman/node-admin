@@ -7,6 +7,7 @@ import { isUUID, validate } from "class-validator";
 import { formatValidationErrors } from "../validation/utility/validation.utility";
 import * as argon2 from "argon2"
 import { Role } from "../entity/role.entity";
+import { UpdateUserDTO } from "../validation/dto/update-user.dto";
 
 export const Users = async (req: Request, res: Response) => {
     const userService = myDataSource.getRepository(User);
@@ -61,6 +62,14 @@ export const CreateUser = async (req: Request, res: Response) => {
 }
 
 export const UpdateUser = async (req: Request, res: Response) => {
+    const body = req.body;
+    const input = plainToClass(UpdateUserDTO, body);
+    const validationErrors = await validate(input);
+
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
+
     if (!isUUID(req.params.id)) {
         return res.status(400).send({ message: "Not Allowed" })
     }

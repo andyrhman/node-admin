@@ -8,6 +8,8 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { RegisterDto } from '../validation/dto/register.dto';
 import { formatValidationErrors } from '../validation/utility/validation.utility';
+import { UpdateUserDTO } from '../validation/dto/update-user.dto';
+import { UpdateInfoDTO } from '../validation/dto/update-info.dto';
 
 // ? https://www.phind.com/agent?cache=clr3id9pk0002l907s609rc5r&source=sidebar
 export const Register = async (req: Request, res: Response) => {
@@ -123,6 +125,14 @@ export const Logout = async (req: Request, res: Response) => {
 export const UpdateInfo = async (req: Request, res: Response) => {
     const user = req["user"];
 
+    const body = req.body;
+    const input = plainToClass(UpdateInfoDTO, body);
+    const validationErrors = await validate(input);
+
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
+
     const userService = myDataSource.getRepository(User);
 
     const existingUser = await userService.findOne({ where: { id: user.id } });
@@ -155,7 +165,6 @@ export const UpdateInfo = async (req: Request, res: Response) => {
 
 export const UpdatePassword = async (req: Request, res: Response) => {
     const user = req["user"];
-
 
     if (req.body.password !== req.body.password_confirm) {
         return res.status(400).send({
