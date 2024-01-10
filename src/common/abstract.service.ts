@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 
 export abstract class AbstractService<T> {
     protected repository: Repository<T>;
@@ -42,5 +42,23 @@ export abstract class AbstractService<T> {
             .where('user.username = :username', { username })
             .orWhere('user.email = :email', { email })
             .getOne();
+    }
+
+    // ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
+    async paginate(options: FindManyOptions<T>, page: number, take: number) {
+        const [data, total] = await this.repository.findAndCount({
+            ...options,
+            take,
+            skip: (page - 1) * take,
+        });
+
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                last_page: Math.ceil(total / take),
+            },
+        };
     }
 }

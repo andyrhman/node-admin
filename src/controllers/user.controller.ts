@@ -8,23 +8,43 @@ import { formatValidationErrors } from "../validation/utility/validation.utility
 import * as argon2 from "argon2"
 import { Role } from "../entity/role.entity";
 import { UpdateUserDTO } from "../validation/dto/update-user.dto";
+import { UserService } from "../services/auth.service";
+import sanitizeHtml from "sanitize-html";
 
 export const Users = async (req: Request, res: Response) => {
-    const userService = myDataSource.getRepository(User);
-    let users = await userService.find({
-        relations: ['role']
-    });
-    if (req.query.search) {
-        const search = req.query.search.toString().toLowerCase();
-        users = users.filter(
-            p => p.fullName.toLowerCase().indexOf(search) >= 0 ||
-                p.username.toLowerCase().indexOf(search) >= 0
-        )
+    const repository = new UserService();
+    const take = 10;
+    const page = parseInt(req.query.page as string || '1');
+    let search = req.query.search;
+
+    let result = await repository.paginate({}, page, take);
+
+    // https://www.phind.com/search?cache=za3cyqzb06bugle970v91phl
+    if (typeof search === 'string') {
+        search = sanitizeHtml(search);
+        if (search) {
+            const search2 = search.toString().toLowerCase();
+            result.data = result.data.filter(
+                p => p.username.toLowerCase().indexOf(search2) >= 0 ||
+                    p.email.toLowerCase().indexOf(search2) >= 0
+            );
+    
+            // Check if the resulting filtered data array is empty
+            if (result.data.length === 0) {
+                // Respond with a 404 status code and a message
+                return res.status(404).json({ message: `Not found search name '${search}'` });
+            }
+        }
     }
-    res.send(users.map(u => {
+    const responseData = result.data.map(u => {
         const { password, ...data } = u;
-        return data
-    }))
+        return data;
+    });
+
+    res.send({
+        data: responseData,
+        meta: result.meta
+    });
 }
 
 export const CreateUser = async (req: Request, res: Response) => {

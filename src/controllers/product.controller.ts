@@ -6,21 +6,38 @@ import { formatValidationErrors } from "../validation/utility/validation.utility
 import { Product } from "../entity/product.entity";
 import { ProductCreateDto } from "../validation/dto/create-product.dto";
 import { ProductUpdateDto } from "../validation/dto/update-product.dto";
+import { ProductService } from "../services/product.service";
+import sanitizeHtml from 'sanitize-html';
 
+// ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
 export const Products = async (req: Request, res: Response) => {
-    const repository = myDataSource.getRepository(Product);
+    const repository = new ProductService();
+    const take = 10;
+    const page = parseInt(req.query.page as string || '1');
+    let search = req.query.search;
 
-    let products = await repository.find();
+    let result = await repository.paginate({}, page, take);
 
-    if (req.query.search) {
-        const search = req.query.search.toString().toLowerCase();
-        products = products.filter(
-            p => p.title.toLowerCase().indexOf(search) >= 0 ||
-                p.description.toLowerCase().indexOf(search) >= 0
-        )
+    // https://www.phind.com/search?cache=za3cyqzb06bugle970v91phl
+    if (typeof search === 'string') {
+        search = sanitizeHtml(search);
+        if (search) {
+            const search2 = search.toString().toLowerCase();
+            result.data = result.data.filter(
+                p => p.title.toLowerCase().indexOf(search2) >= 0 ||
+                    p.description.toLowerCase().indexOf(search2) >= 0
+            );
+    
+            // Check if the resulting filtered data array is empty
+            if (result.data.length === 0) {
+                // Respond with a 404 status code and a message
+                return res.status(404).json({ message: `No ${search} matching your search criteria.` });
+            }
+        }
     }
-    res.send(products)
-}
+
+    res.send(result);
+};
 
 export const CreateProduct = async (req: Request, res: Response) => {
     const body = req.body;
