@@ -61,6 +61,9 @@ export const CreateUser = async (req: Request, res: Response) => {
 }
 
 export const UpdateUser = async (req: Request, res: Response) => {
+    if (!isUUID(req.params.id)) {
+        return res.status(400).send({ message: "Not Allowed" })
+    }
     const userService = myDataSource.getRepository(User);
     const roleService = myDataSource.getRepository(Role);
 
@@ -113,6 +116,9 @@ export const GetUser = async (req: Request, res: Response) => {
 }
 
 export const DeleteUser = async (req: Request, res: Response) => {
+    if (!isUUID(req.params.id)) {
+        return res.status(400).send({ message: "Not Allowed" })
+    }
     const userService = myDataSource.getRepository(User);
 
     await userService.delete(req.params.id);
