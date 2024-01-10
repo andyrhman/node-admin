@@ -1,7 +1,11 @@
+import { plainToClass } from 'class-transformer';
 import { Role } from '../entity/role.entity';
 import { isInteger } from '../validation/utility/parameters.utility';
 import { myDataSource } from './../index';
 import { Request, Response } from "express";
+import { UpdateRoleDTO } from '../validation/dto/update-role.dto';
+import { validate } from 'class-validator';
+import { formatValidationErrors } from '../validation/utility/validation.utility';
 
 export const Roles = async (req: Request, res: Response) => {
     const repository = myDataSource.getRepository(Role);
@@ -11,6 +15,12 @@ export const Roles = async (req: Request, res: Response) => {
 
 export const CreateRole = async (req: Request, res: Response) => {
     const { name, permissions } = req.body;
+    const input = plainToClass(UpdateRoleDTO, req.body);
+    const validationErrors = await validate(input);
+
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
 
     const repository = myDataSource.getRepository(Role);
 
@@ -34,10 +44,17 @@ export const GetRole = async (req: Request, res: Response) => {
     res.send(await repository.findOne({ where: { id }, relations: ['permissions'] }));
 }
 
+// ? https://www.phind.com/search?cache=aww4upilaldpb6wgjnpww7lu
 export const UpdateRole = async (req: Request, res: Response) => {
     const repository = myDataSource.getRepository(Role);
 
     const { name, permissions } = req.body;
+    const input = plainToClass(UpdateRoleDTO, req.body);
+    const validationErrors = await validate(input);
+
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
 
     const role = await repository.save({
         id: parseInt(req.params.id),
