@@ -16,5 +16,15 @@ export class Order {
     created_at: string;
 
     @OneToMany(() => OrderItem, orderItem => orderItem.order)
-    order_item: OrderItem[]
+    order_item: OrderItem[];
+
+    get total(): number {
+        return this.order_item.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    }
+    /*
+        ? If the first and last name name is separated
+        * get name(): string{
+        *     return `${this.first_name} ${this.last_name}`
+        * }
+    */
 }

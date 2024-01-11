@@ -45,11 +45,12 @@ export abstract class AbstractService<T> {
     }
 
     // ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
-    async paginate(options: FindManyOptions<T>, page: number, take: number) {
+    async paginate(options: FindManyOptions<T>, page: number, take: number, relations = []) {
         const [data, total] = await this.repository.findAndCount({
             ...options,
             take,
             skip: (page - 1) * take,
+            relations
         });
 
         return {
