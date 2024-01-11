@@ -114,6 +114,29 @@ export const CreateProduct = async (req: Request, res: Response) => {
     res.status(201).send(product);
 }
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Get a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the product to get
+ *     responses:
+ *       200:
+ *         description: The product description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GetProduct'
+ *       400:
+ *         description: Not Allowed
+ */
 export const GetProduct = async (req: Request, res: Response) => {
     if (!isUUID(req.params.id)) {
         return res.status(400).send({ message: "Not Allowed" })
@@ -123,6 +146,37 @@ export const GetProduct = async (req: Request, res: Response) => {
     res.send(await repository.findOne({ where: { id: req.params.id } }));
 }
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   put:
+ *     summary: Update a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the product to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductUpdateDto'
+ *     responses:
+ *       202:
+ *         description: The product was updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation error or not allowed
+ *       404:
+ *         description: The product was not found
+ */
 export const UpdateProduct = async (req: Request, res: Response) => {
     if (!isUUID(req.params.id)) {
         return res.status(400).send({ message: "Not Allowed" })
@@ -141,6 +195,27 @@ export const UpdateProduct = async (req: Request, res: Response) => {
     res.status(202).send(await repository.findOne({ where: { id: req.params.id } }));
 }
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Delete a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the product to delete
+ *     responses:
+ *       204:
+ *         description: The product was deleted successfully
+ *       400:
+ *         description: Not Allowed - Invalid UUID
+ *       404:
+ *         description: The product was not found
+ */
 export const DeleteProduct = async (req: Request, res: Response) => {
     if (!isUUID(req.params.id)) {
         return res.status(400).send({ message: "Not Allowed" })

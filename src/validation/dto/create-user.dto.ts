@@ -1,6 +1,6 @@
 import { IsString, Length, IsEmail, IsNotEmpty, IsInt } from 'class-validator';
 
-export class RegisterDto {
+export class CreateUserDTO {
   @IsString({ message: 'Full name must be a string' })
   @IsNotEmpty({message: "Full name should not be empty"})
   fullname: string;
