@@ -4,7 +4,7 @@ import { User } from "../entity/user.entity"
 import { plainToClass } from "class-transformer";
 import { RegisterDto } from "../validation/dto/create-user.dto";
 import { isUUID, validate } from "class-validator";
-import { formatValidationErrors } from "../validation/utility/validation.utility";
+import { formatValidationErrors } from "../utility/validation.utility";
 import * as argon2 from "argon2"
 import { Role } from "../entity/role.entity";
 import { UpdateUserDTO } from "../validation/dto/update-user.dto";

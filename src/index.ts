@@ -5,6 +5,7 @@ import { routes } from './routes';
 import { DataSource } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { ValidationMiddleware } from './middleware/validation.middleware';
+import swaggerDocs from './utility/swagger.utitlity';
 
 export const myDataSource = new DataSource({
     type: "postgres",
@@ -36,6 +37,7 @@ myDataSource.initialize().then(() => {
     console.log("Database has been initialized!");
     app.listen(8000, () => {
         console.log('Server listening on port 8000');
+        swaggerDocs(app, 8000);
     });
 }).catch((err) => {
     console.error("Error during Data Source initialization:", err);

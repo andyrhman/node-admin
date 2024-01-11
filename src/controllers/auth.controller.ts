@@ -7,7 +7,7 @@ import { sign } from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { RegisterDto } from '../validation/dto/register.dto';
-import { formatValidationErrors } from '../validation/utility/validation.utility';
+import { formatValidationErrors } from '../utility/validation.utility';
 import { UpdateUserDTO } from '../validation/dto/update-user.dto';
 import { UpdateInfoDTO } from '../validation/dto/update-info.dto';
 

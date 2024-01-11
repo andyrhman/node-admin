@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { myDataSource } from "../index"
 import { plainToClass } from "class-transformer";
 import { isUUID, validate } from "class-validator";
-import { formatValidationErrors } from "../validation/utility/validation.utility";
+import { formatValidationErrors } from "../utility/validation.utility";
 import { Product } from "../entity/product.entity";
 import { ProductCreateDto } from "../validation/dto/create-product.dto";
 import { ProductUpdateDto } from "../validation/dto/update-product.dto";
@@ -10,6 +10,41 @@ import { ProductService } from "../services/product.service";
 import sanitizeHtml from 'sanitize-html';
 
 // ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     tags:
+ *       - Products
+ *     summary: Retrieve a list of products
+ *     description: Retrieve a list of products with optional search criteria. Returns a list of products or a 404 status code if no matching products are found.
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for filtering products
+ *     responses:
+ *       200:
+ *         description: A list of products.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: No products found matching the search criteria.
+ */
 export const Products = async (req: Request, res: Response) => {
     const repository = new ProductService();
     const take = 10;
@@ -39,6 +74,30 @@ export const Products = async (req: Request, res: Response) => {
     res.send(result);
 };
 
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     tags:
+ *       - Products
+ *     summary: Create a new product
+ *     description: Create a new product with the provided data.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductCreateDto'
+ *     responses:
+ *       201:
+ *         description: The product was successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation error.
+ */
 export const CreateProduct = async (req: Request, res: Response) => {
     const body = req.body;
     const input = plainToClass(ProductCreateDto, body);

@@ -1,11 +1,11 @@
 import { plainToClass } from 'class-transformer';
 import { Role } from '../entity/role.entity';
-import { isInteger } from '../validation/utility/parameters.utility';
+import { isInteger } from '../utility/parameters.utility';
 import { myDataSource } from './../index';
 import { Request, Response } from "express";
 import { UpdateRoleDTO } from '../validation/dto/update-role.dto';
 import { validate } from 'class-validator';
-import { formatValidationErrors } from '../validation/utility/validation.utility';
+import { formatValidationErrors } from '../utility/validation.utility';
 
 export const Roles = async (req: Request, res: Response) => {
     const repository = myDataSource.getRepository(Role);
