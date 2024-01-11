@@ -60,7 +60,6 @@ import multer from "multer";
  *       404:
  *         description: Image not found
  */
-
 export const Upload = async (req: Request, res: Response) => {
 
     const storage = multer.diskStorage({
