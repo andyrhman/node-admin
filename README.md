@@ -1,7 +1,7 @@
 # Node Admin with Express server
 
 <p align="center">
-  <img src="https://ih1.redbubble.net/image.367014180.4385/st,small,80x80-pad,80x80,f8f8f8.u3.jpg" />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/300px-Node.js_logo.svg.png" />
 </p>
 
 ## Introduction
