@@ -1,6 +1,6 @@
-# Node Admin A Node Js With Express server
+# Node Admin with Express server
 
-[![N|Solid](https://ih1.redbubble.net/image.367014180.4385/st,small,507x507-pad,600x600,f8f8f8.u3.jpg)](https://github.com/andyrhman/node-admin.git)
+[![N|Solid](https://ih1.redbubble.net/image.367014180.4385/st,small,300x300-pad,300x300,f8f8f8.u3.jpg)](https://github.com/andyrhman/node-admin.git)
 
 ## Introduction
 
