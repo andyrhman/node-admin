@@ -8,6 +8,6 @@ export class UpdateRoleDTO{
 
     @ArrayNotEmpty({ message: 'Permissions is required' })
     @ArrayMinSize(1, { message: 'Permissions should have at least 1 item' })
-    @IsInt({each: true, message: 'Permissions must be a number'})
+    @IsString({each: true, message: 'Permissions must be a string'})
     permissions?: string[]
 }
