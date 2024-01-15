@@ -19,7 +19,7 @@ export const AuthMiddleware = async (req: Request, res: Response, next: Function
         next();
     } catch (error) {
         return res.status(401).send({
-            message: "Unauthenticated 1"
+            message: "Unauthenticated"
         });
     }
 }

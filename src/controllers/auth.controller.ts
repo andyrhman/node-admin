@@ -190,6 +190,9 @@ export const Login = async (req: Request, res: Response) => {
 //  *         description: Unauthenticated - When the user is not logged in or token is invalid
 //  */
 export const AuthenticatedUser = async (req: Request, res: Response) => {
+    if (!req["user"]) {
+        return res.status(401).send({ message: "Unauthenticated" });
+    }
     const user = req["user"]
 
     const userData = user.toObject();
@@ -209,142 +212,142 @@ export const AuthenticatedUser = async (req: Request, res: Response) => {
 //  *       200:
 //  *         description: Successfully logged out
 //  */
-// export const Logout = async (req: Request, res: Response) => {
-//     res.cookie('user_session', '', {
-//         sameSite: 'strict',
-//         maxAge: 0,
-//         // secure: process.env.NODE_ENV === 'production' // Set secure if in production
-//         // domain: 'yourdomain.com', // If cookie was set with specific domain
-//     });
-//     res.send({
-//         message: "Success"
-//     })
-// };
+export const Logout = async (req: Request, res: Response) => {
+    res.cookie('user_session', '', {
+        sameSite: 'strict',
+        maxAge: 0,
+        // secure: process.env.NODE_ENV === 'production' // Set secure if in production
+        // domain: 'yourdomain.com', // If cookie was set with specific domain
+    });
+    res.send({
+        message: "Success"
+    })
+};
 
-// /**
-//  * @swagger
-//  * /api/user/info:
-//  *   put:
-//  *     summary: Update user information
-//  *     tags: [User]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/UpdateInfoDTO'
-//  *     responses:
-//  *       200:
-//  *         description: User information updated successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 fullname:
-//  *                   type: string
-//  *                 username:
-//  *                   type: string
-//  *                 email:
-//  *                   type: string
-//  *       400:
-//  *         description: Validation error with the input data
-//  *       409:
-//  *         description: Email or username already exists
-//  */
-// export const UpdateInfo = async (req: Request, res: Response) => {
-//     const user = req["user"];
+/**
+ * @swagger
+ * /api/user/info:
+ *   put:
+ *     summary: Update user information
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateInfoDTO'
+ *     responses:
+ *       200:
+ *         description: User information updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 fullname:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       400:
+ *         description: Validation error with the input data
+ *       409:
+ *         description: Email or username already exists
+ */
+export const UpdateInfo = async (req: Request, res: Response) => {
+    const user = req["user"];
 
-//     const body = req.body;
-//     const input = plainToClass(UpdateInfoDTO, body);
-//     const validationErrors = await validate(input);
+    const body = req.body;
+    const input = plainToClass(UpdateInfoDTO, body);
+    const validationErrors = await validate(input);
 
-//     if (validationErrors.length > 0) {
-//         return res.status(400).json(formatValidationErrors(validationErrors));
-//     }
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
 
-//     const userService = myDataSource.getRepository(User);
+    const existingUser = await User.findOne({ _id: user.id });
 
-//     const existingUser = await userService.findOne({ where: { id: user.id } });
+    if (req.body.fullname) {
+        existingUser.fullName = req.body.fullname;
+    }
 
-//     if (req.body.fullname) {
-//         existingUser.fullName = req.body.fullname;
-//     }
+    if (req.body.email && req.body.email !== existingUser.email) {
+        const existingUserByEmail = await User.findOne({ email: req.body.email });
+        if (existingUserByEmail) {
+            return res.status(409).send({ message: "Email already exists" });
+        }
+        existingUser.email = req.body.email;
+    }
 
-//     if (req.body.email && req.body.email !== existingUser.email) {
-//         const existingUserByEmail = await userService.findOne({ where: { email: req.body.email } });
-//         if (existingUserByEmail) {
-//             return res.status(409).send({ message: "Email already exists" });
-//         }
-//         existingUser.email = req.body.email;
-//     }
+    if (req.body.username && req.body.username !== existingUser.username) {
+        const existingUserByUsername = await User.findOne({ username: req.body.username });
+        if (existingUserByUsername) {
+            return res.status(409).send({ message: "Username already exists" })
+        }
+        existingUser.username = req.body.username;
+    }
 
-//     if (req.body.username && req.body.username !== existingUser.username) {
-//         const existingUserByUsername = await userService.findOne({ where: { username: req.body.username } });
-//         if (existingUserByUsername) {
-//             return res.status(409).send({ message: "Username already exists" })
-//         }
-//         existingUser.username = req.body.username;
-//     }
+    await User.findByIdAndUpdate(user.id, existingUser);
 
-//     await userService.update(user.id, existingUser);
+    const data = await User.findById(user.id);
+    const userData = data.toObject();
+    delete userData.password;
+    res.send(userData);
+};
 
-//     const { password, ...data } = await userService.findOne({ where: { id: user.id } });
-//     res.send(data);
-// };
+/**
+ * @swagger
+ * /api/user/password:
+ *   put:
+ *     summary: Update user password
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: New password for the user account
+ *               password_confirm:
+ *                 type: string
+ *                 format: password
+ *                 description: Confirmation of the new password
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Password do not match or missing password
+ */
+export const UpdatePassword = async (req: Request, res: Response) => {
+    const user = req["user"];
 
-// /**
-//  * @swagger
-//  * /api/user/password:
-//  *   put:
-//  *     summary: Update user password
-//  *     tags: [User]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               password:
-//  *                 type: string
-//  *                 format: password
-//  *                 description: New password for the user account
-//  *               password_confirm:
-//  *                 type: string
-//  *                 format: password
-//  *                 description: Confirmation of the new password
-//  *     responses:
-//  *       200:
-//  *         description: Password updated successfully
-//  *       400:
-//  *         description: Password do not match or missing password
-//  */
-// export const UpdatePassword = async (req: Request, res: Response) => {
-//     const user = req["user"];
+    if (req.body.password !== req.body.password_confirm) {
+        return res.status(400).send({
+            message: "Password do not match"
+        });
+    } else if (!req.body.password || !req.body.password_confirm) {
+        return res.status(400).send({
+            message: "Password do not match"
+        });
+    }
 
-//     if (req.body.password !== req.body.password_confirm) {
-//         return res.status(400).send({
-//             message: "Password do not match"
-//         });
-//     } else if (!req.body.password || !req.body.password_confirm) {
-//         return res.status(400).send({
-//             message: "Password do not match"
-//         });
-//     }
+    await User.findByIdAndUpdate(user.id, {
+        password: await argon2.hash(req.body.password)
+    });
 
-//     const repository = myDataSource.getRepository(User);
+    const data = await User.findById(user.id);
 
-//     await repository.update(user.id, {
-//         password: await argon2.hash(req.body.password)
-//     });
-
-//     const { password, ...data } = await repository.findOne({ where: { id: user.id } });
-
-//     res.send(data);
-// }
+    const userData = data.toObject();
+    delete userData.password;
+    res.send(userData);
+}
 

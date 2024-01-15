@@ -9,7 +9,7 @@ import { AuthMiddleware } from "./middleware/auth.middleware";
 // import { Chart, Export, Orders } from "./controllers/order.controller";
 // import { PermissionMiddleware } from "./middleware/permission.middleware";
 
-import { Register, Login, AuthenticatedUser } from "./controllers/auth.controller";
+import { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } from "./controllers/auth.controller";
 import express, { Router } from "express";
 
 export const routes = (router: Router) => {
@@ -17,11 +17,9 @@ export const routes = (router: Router) => {
     router.post('/api/login', Login);
 
     router.get('/api/user', AuthMiddleware, AuthenticatedUser);
-
-    // router.get('/api/user', AuthMiddleware, AuthenticatedUser);
-    // router.post('/api/logout', AuthMiddleware, Logout);
-    // router.put('/api/user/info', AuthMiddleware, UpdateInfo);
-    // router.put('/api/user/password', AuthMiddleware, UpdatePassword);
+    router.post('/api/logout', AuthMiddleware, Logout);
+    router.put('/api/user/info', AuthMiddleware, UpdateInfo);
+    router.put('/api/user/password', AuthMiddleware, UpdatePassword);
 
     // router.get('/api/users', AuthMiddleware, PermissionMiddleware('users'), Users);
     // router.post('/api/users', AuthMiddleware, PermissionMiddleware('users'), CreateUser);
