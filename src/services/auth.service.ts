@@ -1,15 +1,8 @@
 import { AbstractService } from "../common/abstract.service";
-import { User } from "../entity/user.entity";
-import { myDataSource } from "../index";
+import { IUser, User } from "../models/user.models";
 
-export class UserService extends AbstractService<User> {
+export class UserService extends AbstractService<IUser> {
     constructor() {
-        super(myDataSource.getRepository(User));
-    }
-    // Find a user by their username or email
-    async findByUsernameOrEmail(username: string, email: string): Promise<any | null> {
-        return this.repository.findOne({
-            where: [{ username }, { email }],
-        });
+        super(User);
     }
 }

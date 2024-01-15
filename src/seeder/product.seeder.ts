@@ -1,4 +1,4 @@
-import { Product } from '../entity/product.entity';
+import { Product } from '../models/product.models';
 import { mySeeder } from './db.config';
 import { fakerID_ID as faker } from "@faker-js/faker";
 

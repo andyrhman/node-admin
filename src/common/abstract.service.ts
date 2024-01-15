@@ -1,65 +1,44 @@
-import { FindManyOptions, Repository } from 'typeorm';
+import { Model } from "mongoose";
 
-export abstract class AbstractService<T> {
-    protected repository: Repository<T>;
-
-    protected constructor(repository: Repository<T>) {
-        this.repository = repository;
+export abstract class AbstractService<T extends Document> {
+    protected model: Model<T>;
+  
+    protected constructor(model: Model<T>) {
+      this.model = model;
     }
-
-    async all(relations: string[] = []): Promise<T[]> {
-        return await this.repository.find({ relations });
+  
+    async all(): Promise<T[]> {
+      return this.model.find().exec();
     }
-
+  
     async create(data: Partial<T>): Promise<T> {
-        return this.repository.save(data as any);
+      const created = new this.model(data);
+      return created.save();
     }
-
-    async update(id: string, data: Partial<T>): Promise<any> {
-        return this.repository.update(id, data as any);
+  
+    async update(id: string, data: Partial<T>): Promise<T | null> {
+      return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
     }
-
-    async delete(id: string): Promise<any> {
-        return this.repository.delete(id);
+  
+    async delete(id: string): Promise<T | null> {
+      return this.model.findByIdAndDelete(id).exec();
     }
-
-    async findOne(options: object, relations: string[] = []): Promise<T | null> {
-        return this.repository.findOne({ where: options, relations } as any);
+  
+    async findOne(options: object): Promise<T | null> {
+      return this.model.findOne(options).exec();
     }
-
-
+  
     async findByEmail(email: string): Promise<T | null> {
-        return this.repository.findOne({ where: { email } } as any);
+      return this.model.findOne({ email }).exec();
     }
-
+  
     async findByUsername(username: string): Promise<T | null> {
-        return this.repository.findOne({ where: { username } } as any);
+      return this.model.findOne({ username }).exec();
     }
-
+  
     async findByUsernameOrEmail(username: string, email: string): Promise<T | null> {
-        return this.repository
-            .createQueryBuilder('user')
-            .where('user.username = :username', { username })
-            .orWhere('user.email = :email', { email })
-            .getOne();
+      return this.model.findOne({
+        $or: [{ username }, { email }],
+      }).exec();
     }
-
-    // ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
-    async paginate(options: FindManyOptions<T>, page: number, take: number, relations = []) {
-        const [data, total] = await this.repository.findAndCount({
-            ...options,
-            take,
-            skip: (page - 1) * take,
-            relations
-        });
-
-        return {
-            data,
-            meta: {
-                total,
-                page,
-                last_page: Math.ceil(total / take),
-            },
-        };
-    }
-}
+  }

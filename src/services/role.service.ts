@@ -1,9 +1,8 @@
 import { AbstractService } from "../common/abstract.service";
-import { Role } from "../entity/role.entity";
-import { myDataSource } from "../index";
+import { Role, IRole } from "../models/role.models";
 
-export class RoleService extends AbstractService<Role> {
+export class RoleService extends AbstractService<IRole> {
     constructor() {
-        super(myDataSource.getRepository(Role));
+        super(Role);
     }
 }

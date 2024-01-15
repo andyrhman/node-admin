@@ -1,6 +1,6 @@
 import { randomInt } from 'crypto';
-import { OrderItem } from '../entity/order-item.entity';
-import { Order } from '../entity/order.entity';
+import { OrderItem } from '../models/order-item.models';
+import { Order } from '../models/order.models';
 import { mySeeder } from './db.config';
 import { fakerID_ID as faker } from "@faker-js/faker";
 

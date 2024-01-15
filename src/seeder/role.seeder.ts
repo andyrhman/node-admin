@@ -1,5 +1,5 @@
-import { Permission } from '../entity/permission.entity';
-import { Role } from '../entity/role.entity';
+import { Permission } from '../models/permission.models';
+import { Role } from '../models/role.models';
 import { mySeeder } from './db.config';
 
 mySeeder.initialize().then(async () => {

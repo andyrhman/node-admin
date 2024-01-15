@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { myDataSource } from "../index";
-import { User } from "../entity/user.entity";
+import { User } from "../models/user.models";
 import { verify } from "jsonwebtoken";
 
 export const AuthMiddleware = async (req: Request, res: Response, next: Function) => {
@@ -15,13 +14,12 @@ export const AuthMiddleware = async (req: Request, res: Response, next: Function
             });
         };
 
-        const repository = myDataSource.getRepository(User);
-        req["user"] = await repository.findOne({ where: { id: payload.id }, relations:['role', 'role.permissions']});
+        req["user"] = await User.findById(payload.id);
 
         next();
     } catch (error) {
         return res.status(401).send({
-            message: "Unauthenticated"
+            message: "Unauthenticated 1"
         });
     }
 }
