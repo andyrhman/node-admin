@@ -1,10 +1,12 @@
 import { plainToClass } from 'class-transformer';
 import { Role } from '../models/role.models';
-import mongoose from 'mongoose';
+import mongoose, { isObjectIdOrHexString, isValidObjectId } from 'mongoose';
 import { Request, Response } from "express";
 import { UpdateRoleDTO } from '../validation/dto/update-role.dto';
 import { validate } from 'class-validator';
 import { formatValidationErrors } from '../utility/validation.utility';
+import sanitizeHtml from 'sanitize-html';
+import { Permission } from '../models/permission.models';
 
 /**
  * @swagger
@@ -100,15 +102,20 @@ export const CreateRole = async (req: Request, res: Response) => {
 //  *       404:
 //  *         description: Role not found
 //  */
-// export const GetRole = async (req: Request, res: Response) => {
-//     const repository = myDataSource.getRepository(Role);
-//     // ? https://www.phind.com/search?cache=mu5hj3pjn11evlg5d1us2la2
-//     const id = parseInt(req.params.id, 10);
+export const GetRole = async (req: Request, res: Response) => {
+    if (!isObjectIdOrHexString(req.params.id)) {
+        return res.status(400).send({ message: "Invalid Request" })
+    }
 
-//     res.send(await repository.findOne({ where: { id }, relations: ['permissions'] }));
-// }
+    const id = req.params.id;
+
+    const sanitize = sanitizeHtml(id);
+
+    res.send(await Role.findById(sanitize));
+}
 
 // ? https://www.phind.com/search?cache=aww4upilaldpb6wgjnpww7lu
+// ? Mongodb overwrite existing data --> https://www.phind.com/search?cache=zveyxjnui5k4jkz8qud43tba
 /**
  * @swagger
  * /api/roles/{id}:
@@ -142,7 +149,10 @@ export const CreateRole = async (req: Request, res: Response) => {
  *       404:
  *         description: Role not found
  */
-export const UpdateRole = async (req: Request, res: Response) => {
+export const UpdateRole = async (req: Request, res: Response, next: Function) => {
+    if (!isValidObjectId(req.params.id)) {
+        return res.status(400).send({ message: "Invalid Request" })
+    }
     const { name, permissions } = req.body;
     const input = plainToClass(UpdateRoleDTO, req.body);
     const validationErrors = await validate(input);
@@ -151,6 +161,22 @@ export const UpdateRole = async (req: Request, res: Response) => {
         return res.status(400).json(formatValidationErrors(validationErrors));
     }
 
+    // * Validate if all permissions exist in the database
+    // ? https://www.phind.com/search?cache=adnqesyk06lzgu2upr024c9h
+    const permissionValidationPromises = permissions.map(permissionId => {
+        if (isValidObjectId(permissionId)) { // ? remove isValidObjectId() if your parameter is not ObjectId
+            return Permission.findById(permissionId);
+        } else {
+            return null;
+        }
+    });    
+
+    const permissionsExist = await Promise.all(permissionValidationPromises);
+
+    if (permissionsExist.includes(null)) {
+        return res.status(400).json({ message: 'Invalid Request' });
+    }
+    
     const updatedRole = await Role.findOneAndUpdate(
         { _id: req.params.id }, // Use the role ID from the request parameters
         {
@@ -194,14 +220,12 @@ export const UpdateRole = async (req: Request, res: Response) => {
 //  *       404:
 //  *         description: Role not found
 //  */
-// export const DeleteRole = async (req: Request, res: Response) => {
-//     if (!isInteger(req.params.id)) {
-//         return res.status(400).send({ message: "Invalid Request" });
-//     }
+export const DeleteRole = async (req: Request, res: Response) => {
+    if (!isValidObjectId(req.params.id)) {
+        return res.status(400).send({ message: "Invalid Request" });
+    }
 
-//     const repository = myDataSource.getRepository(Role);
+    await Role.findByIdAndDelete(req.params.id);
 
-//     await repository.delete(req.params.id);
-
-//     res.status(204).send(null);
-// }
+    res.status(204).send(null);
+}
