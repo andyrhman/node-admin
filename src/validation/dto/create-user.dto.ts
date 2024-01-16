@@ -14,7 +14,7 @@ export class CreateUserDTO {
   @IsNotEmpty({message: "Full name should not be empty"})
   email: string;
 
-  @IsInt({ message: 'Role must be a integer' })
+  @IsString({ message: 'Role must be a string' })
   @IsNotEmpty({message: "Full name should not be empty"})
-  role_id: number;
+  role_id: string;
 }

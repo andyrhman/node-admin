@@ -14,7 +14,7 @@ export class UpdateUserDTO {
   @IsOptional()
   email?: string;
 
-  @IsInt({ message: 'Role must be a integer' })
+  @IsString({ message: 'Role must be a string' })
   @IsOptional()
-  role_id: number;
+  role_id?: string;
 }

@@ -54,12 +54,12 @@ export const Register = async (req: Request, res: Response) => {
         username: body.username.toLowerCase(),
         email: body.email.toLowerCase(),
         password: await argon2.hash(body.password),
-        role: "65a52d8ff601e98ad8b75f5b"
+        role: "65a63de39aa664295e9b4e38"
     });
 
-    const userData = user.toObject();
-    delete userData.password;
-    res.send(userData);
+    const { password, ...data } = user.toObject();
+    
+    res.send(data);
 };
 
 // ? Fixing "Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client"
@@ -191,9 +191,9 @@ export const AuthenticatedUser = async (req: Request, res: Response) => {
     }
     const user = req["user"]
 
-    const userData = user.toObject();
-    delete userData.password;
-    res.send(userData);
+    const { password, ...data } = user.toObject();
+    
+    res.send(data);
 };
 
 /**
@@ -289,9 +289,10 @@ export const UpdateInfo = async (req: Request, res: Response) => {
     await User.findByIdAndUpdate(user.id, existingUser);
 
     const data = await User.findById(user.id);
-    const userData = data.toObject();
-    delete userData.password;
-    res.send(userData);
+
+    const { password, ...Userdata } = data.toObject();
+    
+    res.send(Userdata);
 };
 
 /**
