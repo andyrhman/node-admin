@@ -14,9 +14,20 @@ export const AuthMiddleware = async (req: Request, res: Response, next: Function
             });
         };
 
-        req["user"] = await User.findById(payload.id);
+        // Use Mongoose's `populate` to include related documents (role and permissions)
+        const user = await User.findById(payload.id).populate({
+            path: 'role',
+            populate: {
+                path: 'permissions'
+            }
+        });
 
-        next();
+        if (!user) {
+            return res.status(401).send({ message: "Unauthenticated" });
+        }
+
+        req['user'] = user;
+        next()
     } catch (error) {
         return res.status(401).send({
             message: "Unauthenticated"

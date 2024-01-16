@@ -4,7 +4,7 @@ import { IPermission } from './permission.models';
 export interface IRole extends Document {
   _id: string;
   name: string;
-  permissions: IPermission['_id'][];
+  permissions: IPermission[]; 
 }
 
 const RoleSchema: Schema = new Schema({

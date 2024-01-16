@@ -54,11 +54,7 @@ export const Register = async (req: Request, res: Response) => {
         username: body.username.toLowerCase(),
         email: body.email.toLowerCase(),
         password: await argon2.hash(body.password),
-        // role: {
-        //     id: 3,
-        //     name: '',
-        //     permissions: []
-        // }
+        role: "65a52d8ff601e98ad8b75f5b"
     });
 
     const userData = user.toObject();
@@ -350,4 +346,3 @@ export const UpdatePassword = async (req: Request, res: Response) => {
     delete userData.password;
     res.send(userData);
 }
-

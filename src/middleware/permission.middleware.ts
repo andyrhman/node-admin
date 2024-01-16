@@ -1,9 +1,14 @@
-import {Request, Response} from "express";
-import {User} from "../models/user.models";
+import { Request, Response } from "express";
+import { IUser } from "../models/user.models";
 
 export const PermissionMiddleware = (access: string) => {
     return (req: Request, res: Response, next: Function) => {
-        const user: User = req['user'];
+        const user: IUser = req['user'];
+
+        // Check if the role and permissions are populated
+        if (!user.role || !user.role.permissions) {
+            return res.status(403).send({ message: 'Unauthorized' });
+        }
 
         const permissions = user.role.permissions;
 

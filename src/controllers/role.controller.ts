@@ -65,6 +65,20 @@ export const CreateRole = async (req: Request, res: Response) => {
         return res.status(400).json(formatValidationErrors(validationErrors));
     }
 
+    const permissionValidationPromises = permissions.map(permissionId => {
+        if (isValidObjectId(permissionId)) { // ? remove isValidObjectId() if your parameter is not ObjectId
+            return Permission.findById(permissionId);
+        } else {
+            return null;
+        }
+    });    
+
+    const permissionsExist = await Promise.all(permissionValidationPromises);
+
+    if (permissionsExist.includes(null)) {
+        return res.status(400).json({ message: 'Invalid Request' });
+    }
+    
     const role = await Role.create({
         name,
         permissions: permissions.map((_id: any) => {

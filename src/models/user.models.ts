@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document as MongooseDocument } from 'mongoose';
+import { IRole } from './role.models';
 
 // Step 1: Define the TypeScript interface for the User model
 export interface IUser extends Document {
@@ -9,7 +10,7 @@ export interface IUser extends Document {
   password: string;
   created_at: Date;
   // Assuming you have a Role model defined elsewhere
-  role: mongoose.Types.ObjectId;
+  role: IRole;
 }
 
 // Step 2: Create the Mongoose schema

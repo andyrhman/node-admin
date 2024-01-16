@@ -7,7 +7,7 @@ import { AuthMiddleware } from "./middleware/auth.middleware";
 // import { CreateProduct, DeleteProduct, GetProduct, Products, UpdateProduct } from "./controllers/product.controller";
 // import { Upload } from "./controllers/image.controller";
 // import { Chart, Export, Orders } from "./controllers/order.controller";
-// import { PermissionMiddleware } from "./middleware/permission.middleware";
+import { PermissionMiddleware } from "./middleware/permission.middleware";
 
 import { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } from "./controllers/auth.controller";
 import { Roles, CreateRole, UpdateRole, GetRole, DeleteRole } from "./controllers/role.controller";
@@ -30,11 +30,11 @@ export const routes = (router: Router) => {
 
     // router.get('/api/permissions', AuthMiddleware, Permissions);
 
-    router.get('/api/roles', AuthMiddleware, Roles);
-    router.post('/api/roles', AuthMiddleware, CreateRole);
-    router.get('/api/roles/:id', AuthMiddleware, GetRole);
-    router.put('/api/roles/:id', AuthMiddleware, UpdateRole);
-    router.delete('/api/roles/:id', AuthMiddleware, DeleteRole);
+    router.get('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), Roles);
+    router.post('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), CreateRole);
+    router.get('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), GetRole);
+    router.put('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), UpdateRole);
+    router.delete('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), DeleteRole);
 
     // router.get('/api/products', AuthMiddleware, PermissionMiddleware('products'), Products);
     // router.post('/api/products', AuthMiddleware, PermissionMiddleware('products'), CreateProduct);

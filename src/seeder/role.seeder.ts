@@ -24,7 +24,7 @@ mongoose.connect('mongodb://localhost/node_admin').then(async () => {
     });
 
     const viewerPermissions = permissions.filter((perm, index) => {
-        return ![1, 5, 7].includes(index); // exclude 'edit_users', 'edit_products', 'edit_orders'
+        return ![1, 3, 5, 7].includes(index); // exclude 'edit_users', 'edit_products', 'edit_orders'
     }).map(perm => perm._id);
 
     await Role.create({
