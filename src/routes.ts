@@ -12,6 +12,7 @@ import { PermissionMiddleware } from "./middleware/permission.middleware";
 import { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } from "./controllers/auth.controller";
 import { Roles, CreateRole, UpdateRole, GetRole, DeleteRole } from "./controllers/role.controller";
 import { CreateUser, DeleteUser, GetUser, UpdateUser, Users } from "./controllers/user.controller";
+import { Permissions } from "./controllers/permission.controller";
 import express, { Router } from "express";
 
 export const routes = (router: Router) => {
@@ -29,7 +30,7 @@ export const routes = (router: Router) => {
     router.put('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), UpdateUser);
     router.delete('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), DeleteUser);
 
-    // router.get('/api/permissions', AuthMiddleware, Permissions);
+    router.get('/api/permissions', AuthMiddleware, Permissions);
 
     router.get('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), Roles);
     router.post('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), CreateRole);
