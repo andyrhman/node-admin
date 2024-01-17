@@ -1,4 +1,3 @@
-// import { Upload } from "./controllers/image.controller";
 import { PermissionMiddleware } from "./middleware/permission.middleware";
 import { AuthMiddleware } from "./middleware/auth.middleware";
 import { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } from "./controllers/auth.controller";
@@ -7,6 +6,7 @@ import { CreateUser, DeleteUser, GetUser, UpdateUser, Users } from "./controller
 import { CreateProduct, DeleteProduct, GetProduct, Products, UpdateProduct } from "./controllers/product.controller";
 import { Chart, Export, Orders } from "./controllers/order.controller";
 import { Permissions } from "./controllers/permission.controller";
+import { Upload } from "./controllers/image.controller";
 import express, { Router } from "express";
 
 export const routes = (router: Router) => {
@@ -31,10 +31,9 @@ export const routes = (router: Router) => {
     router.get('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), GetRole);
     router.put('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), UpdateRole);
     router.delete('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), DeleteRole);
-
     
-    // router.post('/api/upload', AuthMiddleware, Upload);
-    // router.use('/api/uploads', express.static('./uploads'));
+    router.post('/api/upload', AuthMiddleware, PermissionMiddleware('products'), Upload);
+    router.use('/api/uploads', express.static('./uploads'));
     
     router.get('/api/orders', AuthMiddleware, PermissionMiddleware('orders'), Orders);
     router.post('/api/export', AuthMiddleware, PermissionMiddleware('orders'), Export);
