@@ -110,7 +110,6 @@ export const Export = async (req: Request, res: Response) => {
         });
     });
 
-
     const csv = parser.parse(json);
 
     res.header('Content-Type', 'text/csv');
