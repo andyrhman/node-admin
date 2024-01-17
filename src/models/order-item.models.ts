@@ -1,21 +1,18 @@
-// import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-// import { Order } from "./order.entity";
+import mongoose, { Schema } from "mongoose";
 
-// @Entity('order_items')
-// export class OrderItem{
-//     @PrimaryGeneratedColumn('uuid')
-//     id: string;
+export interface IOrderItem extends Document {
+    _id: string;
+    product_title: string;
+    price: number;
+    quantity: number;
+    order: string;
+}
 
-//     @Column()
-//     product_title: string;
+export const OrderItemSchema = new Schema({
+    product_title: { type: String, required: true },
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+})
 
-//     @Column()
-//     price: number;
-
-//     @Column()
-//     quantity: number;
-
-//     @ManyToOne(() => Order, order => order.order_item)
-//     @JoinColumn({name: "order_id"})
-//     order: Order;
-// }
+export const OrderItem = mongoose.model<IOrderItem>('OrderItem', OrderItemSchema);

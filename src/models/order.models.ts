@@ -1,30 +1,32 @@
-// import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-// import { OrderItem } from "./order-item.entity";
+import mongoose, { Schema } from "mongoose";
+import { IOrderItem, OrderItemSchema } from "./order-item.models";
 
-// @Entity('orders')
-// export class Order {
-//     @PrimaryGeneratedColumn('uuid')
-//     id: string;
+export interface IOrder extends Document {
+    _id: string;
+    name: string;
+    email: string;
+    created_at: string;
+    order_items: IOrderItem[]
+}
 
-//     @Column()
-//     name: string;
+const OrderSchema = new Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    order_items: [OrderItemSchema]
+    // order_items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' }]
+}, {
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
+    },
+    virtuals: {
+        total: {
+            get(): number {
+                return this.order_items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+            }
+        }
+    },
+    toJSON: { virtuals: true }
+})
 
-//     @Column()
-//     email: string;
-
-//     @CreateDateColumn()
-//     created_at: string;
-
-//     @OneToMany(() => OrderItem, orderItem => orderItem.order)
-//     order_item: OrderItem[];
-
-//     get total(): number {
-//         return this.order_item.reduce((sum, i) => sum + i.quantity * i.price, 0);
-//     }
-//     /*
-//         ? If the first and last name name is separated
-//         * get name(): string{
-//         *     return `${this.first_name} ${this.last_name}`
-//         * }
-//     */
-// }
+export const Order = mongoose.model<IOrder>('Order', OrderSchema)
