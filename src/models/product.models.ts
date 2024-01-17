@@ -1,25 +1,25 @@
-// import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import mongoose, { Schema } from "mongoose";
 
-// @Entity('products')
-// export class Product {
-//     @PrimaryGeneratedColumn('uuid')
-//     id: string;
+export interface IProduct extends Document {
+    _id: string;
+    title: string;
+    description: string;
+    image: string;
+    price: number;
+    created_at: Date;
+    updated_at: Date;
+}
 
-//     @Column()
-//     title: string;
+const ProductSchema = new Schema({
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    image: { type: String, required: true },
+    price: { type: Number, required: true }
+}, {
+    timestamps: {
+        createdAt: 'created_at', // Use `created_at` to store the created date
+        updatedAt: 'updated_at' // and `updated_at` to store the last updated date
+    }
+})
 
-//     @Column()
-//     description: string;  
-
-//     @Column()
-//     image: string;
-
-//     @Column()
-//     price: number;
-
-//     @CreateDateColumn()
-//     created_at: string;
-
-//     @UpdateDateColumn()
-//     updated_at: string;
-// }
+export const Product = mongoose.model<IProduct>('Product', ProductSchema)

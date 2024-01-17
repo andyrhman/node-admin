@@ -1,12 +1,11 @@
-import { Product } from '../models/product.models';
-import { mySeeder } from './db.config';
+import mongoose from "mongoose";
+import { Product } from "../models/product.models";
 import { fakerID_ID as faker } from "@faker-js/faker";
 
-mySeeder.initialize().then(async () => {
-    const repository = mySeeder.getRepository(Product);
+mongoose.connect('mongodb://localhost/node_admin').then(async () => {
 
     for (let i = 0; i < 30; i++) {
-        await repository.save({
+        await Product.create({
             title: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             image: faker.image.urlLoremFlickr({ width: 800, height: 800, category: 'food' }),
@@ -15,7 +14,7 @@ mySeeder.initialize().then(async () => {
         
     }
 
-    console.log('Seeding complete!');
+    console.log('🌱 Seeding complete!');
     process.exit(0);
 }).catch((err) => {
     console.error("Error during Data Source initialization:", err);

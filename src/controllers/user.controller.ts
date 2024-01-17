@@ -11,50 +11,50 @@ import { UpdateUserDTO } from "../validation/dto/update-user.dto";
 import sanitizeHtml from "sanitize-html";
 import { isValidObjectId } from "mongoose";
 
-// /**
-//  * @swagger
-//  * /api/users:
-//  *   get:
-//  *     summary: Get a paginated list of users
-//  *     tags: [Users]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: query
-//  *         name: page
-//  *         schema:
-//  *           type: integer
-//  *           default: 1
-//  *         description: Page number for paginated results
-//  *       - in: query
-//  *         name: search
-//  *         schema:
-//  *           type: string
-//  *         description: Search term to filter users by username or email
-//  *     responses:
-//  *       200:
-//  *         description: A paginated list of users
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 data:
-//  *                   type: array
-//  *                   items:
-//  *                     $ref: '#/components/schemas/User'
-//  *                 meta:
-//  *                   type: object
-//  *                   properties:
-//  *                     total:
-//  *                       type: integer
-//  *                     page:
-//  *                       type: integer
-//  *                     last_page:
-//  *                       type: integer
-//  *       404:
-//  *         description: No users found matching the search criteria
-//  */
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Get a paginated list of users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for paginated results
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term to filter users by username or email
+ *     responses:
+ *       200:
+ *         description: A paginated list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     last_page:
+ *                       type: integer
+ *       404:
+ *         description: No users found matching the search criteria
+ */
 export const Users = async (req: Request, res: Response) => {
     const take = 10;
     const page = parseInt(req.query.page as string || '1');
@@ -92,31 +92,31 @@ export const Users = async (req: Request, res: Response) => {
 }
 
 /**
-//  * @swagger
-//  * /api/users:
-//  *   post:
-//  *     summary: Create a new user
-//  *     tags: [Users]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/RegisterDto'
-//  *     responses:
-//  *       201:
-//  *         description: User created successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/User'
-//  *       400:
-//  *         description: Validation error with the input data
-//  *       409:
-//  *         description: Email or username already exists
-//  */
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RegisterDto'
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Validation error with the input data
+ *       409:
+ *         description: Email or username already exists
+ */
 export const CreateUser = async (req: Request, res: Response) => {
     const body = req.body;
     const input = plainToClass(CreateUserDTO, body);
@@ -155,41 +155,41 @@ export const CreateUser = async (req: Request, res: Response) => {
 }
 
 /**
-//  * @swagger
-//  * /api/users/{id}:
-//  *   put:
-//  *     summary: Update a user by ID
-//  *     tags: [Users]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *           format: uuid
-//  *         description: UUID of the user to update
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/UpdateUserDTO'
-//  *     responses:
-//  *       202:
-//  *         description: User updated successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/User'
-//  *       400:
-//  *         description: Validation error or Not Allowed - Invalid UUID
-//  *       404:
-//  *         description: User or role not found
-//  *       409:
-//  *         description: Email or username already exists
-//  */
+ * @swagger
+ * /api/users/{id}:
+ *   put:
+ *     summary: Update a user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: UUID of the user to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateUserDTO'
+ *     responses:
+ *       202:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Validation error or Not Allowed - Invalid UUID
+ *       404:
+ *         description: User or role not found
+ *       409:
+ *         description: Email or username already exists
+ */
 export const UpdateUser = async (req: Request, res: Response) => {
     const body = req.body;
     const input = plainToClass(UpdateUserDTO, body);
@@ -241,33 +241,33 @@ export const UpdateUser = async (req: Request, res: Response) => {
 }
 
 /**
-//  * @swagger
-//  * /api/users/{id}:
-//  *   get:
-//  *     summary: Get a user by ID
-//  *     tags: [Users]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *           format: uuid
-//  *         description: UUID of the user to get
-//  *     responses:
-//  *       200:
-//  *         description: User retrieved successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/User'
-//  *       400:
-//  *         description: Not Allowed - Invalid UUID
-//  *       404:
-//  *         description: User not found
-//  */
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     summary: Get a user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: UUID of the user to get
+ *     responses:
+ *       200:
+ *         description: User retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Not Allowed - Invalid UUID
+ *       404:
+ *         description: User not found
+ */
 export const GetUser = async (req: Request, res: Response) => {
     if (!isValidObjectId(req.params.id)) {
         return res.status(400).send({ message: "Not Allowed" })
@@ -279,29 +279,29 @@ export const GetUser = async (req: Request, res: Response) => {
 }
 
 /**
-//  * @swagger
-//  * /api/users/{id}:
-//  *   delete:
-//  *     summary: Delete a user by ID
-//  *     tags: [Users]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *           format: uuid
-//  *         description: UUID of the user to delete
-//  *     responses:
-//  *       204:
-//  *         description: User deleted successfully
-//  *       400:
-//  *         description: Not Allowed - Invalid UUID
-//  *       404:
-//  *         description: User not found
-//  */
+ * @swagger
+ * /api/users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: UUID of the user to delete
+ *     responses:
+ *       204:
+ *         description: User deleted successfully
+ *       400:
+ *         description: Not Allowed - Invalid UUID
+ *       404:
+ *         description: User not found
+ */
 export const DeleteUser = async (req: Request, res: Response) => {
     if (!isValidObjectId(req.params.id)) {
         return res.status(400).send({ message: "Not Allowed" })

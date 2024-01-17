@@ -32,7 +32,7 @@ mongoose.connect('mongodb://localhost/node_admin').then(async () => {
         permissions: viewerPermissions
     });
 
-    console.log('Seeding complete!');
+    console.log('🌱 Seeding complete!');
     process.exit(0);
 }).catch((err) => {
     console.error("Error during Data Source initialization:", err);

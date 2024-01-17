@@ -31,31 +31,31 @@ export const Roles = async (req: Request, res: Response) => {
 }
 
 /**
-//  * @swagger
-//  * /api/roles:
-//  *   post:
-//  *     summary: Create a new role
-//  *     tags: [Roles]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/UpdateRoleDTO'
-//  *     responses:
-//  *       201:
-//  *         description: Role created successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/Role'
-//  *       400:
-//  *         description: Validation error
-//  *       409:
-//  *         description: Role already exists
-//  */
+ * @swagger
+ * /api/roles:
+ *   post:
+ *     summary: Create a new role
+ *     tags: [Roles]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateRoleDTO'
+ *     responses:
+ *       201:
+ *         description: Role created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Role'
+ *       400:
+ *         description: Validation error
+ *       409:
+ *         description: Role already exists
+ */
 export const CreateRole = async (req: Request, res: Response) => {
     const { name, permissions } = req.body;
     const input = plainToClass(UpdateRoleDTO, req.body);
@@ -92,30 +92,30 @@ export const CreateRole = async (req: Request, res: Response) => {
 }
 
 /**
-//  * @swagger
-//  * /api/roles/{id}:
-//  *   get:
-//  *     summary: Get a role by ID
-//  *     tags: [Roles]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Numeric ID of the role to retrieve
-//  *     responses:
-//  *       200:
-//  *         description: Role data
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/Role'
-//  *       404:
-//  *         description: Role not found
-//  */
+ * @swagger
+ * /api/roles/{id}:
+ *   get:
+ *     summary: Get a role by ID
+ *     tags: [Roles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the role to retrieve
+ *     responses:
+ *       200:
+ *         description: Role data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Role'
+ *       404:
+ *         description: Role not found
+ */
 export const GetRole = async (req: Request, res: Response) => {
     if (!isObjectIdOrHexString(req.params.id)) {
         return res.status(400).send({ message: "Invalid Request" })
@@ -212,28 +212,28 @@ export const UpdateRole = async (req: Request, res: Response, next: Function) =>
 }
 
 /**
-//  * @swagger
-//  * /api/roles/{id}:
-//  *   delete:
-//  *     summary: Delete an existing role
-//  *     tags: [Roles]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Numeric ID of the role to delete
-//  *     responses:
-//  *       204:
-//  *         description: Role deleted successfully
-//  *       400:
-//  *         description: Invalid request due to incorrect path parameter
-//  *       404:
-//  *         description: Role not found
-//  */
+ * @swagger
+ * /api/roles/{id}:
+ *   delete:
+ *     summary: Delete an existing role
+ *     tags: [Roles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the role to delete
+ *     responses:
+ *       204:
+ *         description: Role deleted successfully
+ *       400:
+ *         description: Invalid request due to incorrect path parameter
+ *       404:
+ *         description: Role not found
+ */
 export const DeleteRole = async (req: Request, res: Response) => {
     if (!isValidObjectId(req.params.id)) {
         return res.status(400).send({ message: "Invalid Request" });

@@ -64,41 +64,41 @@ export const Register = async (req: Request, res: Response) => {
 
 // ? Fixing "Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client"
 // ? https://www.phind.com/search?cache=ju5e3pn4l73xw2j0v7stzoc4
-// /**
-//  * @swagger
-//  * /api/login:
-//  *   post:
-//  *     summary: Login a user and return a JWT token
-//  *     tags: [Authentication]
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               #email:
-//  *               #  type: string
-//  *               #  format: email
-//  *               #  description: Email address of the user, use this or username
-//  *               username:
-//  *                 type: string
-//  *                 description: Username of the user, use this or email
-//  *               password:
-//  *                 type: string
-//  *                 format: password
-//  *                 description: Password for the user account
-//  *               rememberMe:
-//  *                 type: boolean
-//  *                 description: Whether to remember the user for a longer period
-//  *     responses:
-//  *       200:
-//  *         description: Login successful, returns a success message
-//  *       400:
-//  *         description: Invalid credentials provided
-//  *       404:
-//  *         description: User not found
-//  */
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     summary: Login a user and return a JWT token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               #email:
+ *               #  type: string
+ *               #  format: email
+ *               #  description: Email address of the user, use this or username
+ *               username:
+ *                 type: string
+ *                 description: Username of the user, use this or email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: Password for the user account
+ *               rememberMe:
+ *                 type: boolean
+ *                 description: Whether to remember the user for a longer period
+ *     responses:
+ *       200:
+ *         description: Login successful, returns a success message
+ *       400:
+ *         description: Invalid credentials provided
+ *       404:
+ *         description: User not found
+ */
 export const Login = async (req: Request, res: Response) => {
     const body = req.body;
 
@@ -161,30 +161,30 @@ export const Login = async (req: Request, res: Response) => {
 };
 
 /**
-//  * @swagger
-//  * /api/user:
-//  *   get:
-//  *     summary: Get the authenticated user's data
-//  *     tags: [Authentication]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     responses:
-//  *       200:
-//  *         description: Authenticated user data
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 id:
-//  *                   type: string
-//  *                 username:
-//  *                   type: string
-//  *                 email:
-//  *                   type: string
-//  *       401:
-//  *         description: Unauthenticated - When the user is not logged in or token is invalid
-//  */
+ * @swagger
+ * /api/user:
+ *   get:
+ *     summary: Get the authenticated user's data
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Authenticated user data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       401:
+ *         description: Unauthenticated - When the user is not logged in or token is invalid
+*/
 export const AuthenticatedUser = async (req: Request, res: Response) => {
     if (!req["user"]) {
         return res.status(401).send({ message: "Unauthenticated" });
@@ -197,17 +197,17 @@ export const AuthenticatedUser = async (req: Request, res: Response) => {
 };
 
 /**
-//  * @swagger
-//  * /api/logout:
-//  *   post:
-//  *     summary: Logout the user
-//  *     tags: [Authentication]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     responses:
-//  *       200:
-//  *         description: Successfully logged out
-//  */
+ * @swagger
+ * /api/logout:
+ *   post:
+ *     summary: Logout the user
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully logged out
+ */
 export const Logout = async (req: Request, res: Response) => {
     res.cookie('user_session', '', {
         sameSite: 'strict',
