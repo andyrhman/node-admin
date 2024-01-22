@@ -9,11 +9,10 @@ export interface IOrder extends Document {
     order_items: IOrderItem[]
 }
 
-const OrderSchema = new Schema({
+const OrderSchema = new Schema<IOrder>({
     name: { type: String, required: true },
     email: { type: String, required: true },
-    order_items: [OrderItemSchema]
-    // order_items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' }]
+    order_items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' }]
 }, {
     timestamps: {
         createdAt: 'created_at',

@@ -1,6 +1,6 @@
-import { Model } from "mongoose";
+import { HydratedDocument, Model } from "mongoose";
 
-export abstract class AbstractService<T extends Document> {
+export abstract class AbstractService<T extends HydratedDocument<any>> {
   protected model: Model<T>;
 
   protected constructor(model: Model<T>) {

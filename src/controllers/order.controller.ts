@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import sanitizeHtml from "sanitize-html";
 import { Parser } from "@json2csv/plainjs";
 import { IOrder, Order } from "../models/order.models";
-import { IOrderItem, OrderItem } from "../models/order-item.models";
+import { OrderItem } from "../models/order-item.models";
+import { IOrderItem } from "../models/order-item.models";
 import { paginate } from "../utility/pagination.utility";
 
 /**
@@ -32,11 +33,9 @@ import { paginate } from "../utility/pagination.utility";
  *         description: No orders found matching the search criteria.
  */
 export const Orders = async (req: Request, res: Response) => {
-    const take = 10;
-    const page = parseInt(req.query.page as string || '1');
     let search = req.query.search;
 
-    let result = await paginate(Order, page, take);
+    let result = await Order.find().populate('order_items');
 
     // https://www.phind.com/search?cache=za3cyqzb06bugle970v91phl
     if (typeof search === 'string') {
@@ -44,7 +43,7 @@ export const Orders = async (req: Request, res: Response) => {
         if (search) {
             const searchOrder = search.toString().toLowerCase();
 
-            result.data = result.data.filter(order => {
+            result = result.filter(order => {
                 const orderMatches = order.order_items.some(orderItem => {
                     return orderItem.product_title.toLowerCase().includes(searchOrder);
                 });
@@ -54,16 +53,27 @@ export const Orders = async (req: Request, res: Response) => {
                     orderMatches
                 );
             });
-
-            // Check if the resulting filtered data array is empty
-            if (result.data.length === 0) {
-                // Respond with a 404 status code and a message
-                return res.status(404).json({ message: `No ${search} matching your search criteria.` });
-            }
         }
     }
+    // * Paginating products
+    const page: number = parseInt(req.query.page as any) || 1;
+    const perPage = 9;
+    const total = result.length;
 
-    res.send(result);
+    const data = result.slice((page - 1) * perPage, page * perPage)
+
+    // Check if the resulting filtered data array is empty
+    if (data.length === 0) {
+        // Respond with a 404 status code and a message
+        return res.status(404).json({ message: `No ${search} matching your search criteria.` });
+    }
+
+    res.send({
+        data,
+        total,
+        page,
+        last_page: Math.ceil(total / perPage)
+    });
 };
 
 /**
@@ -155,20 +165,30 @@ export const Chart = async (req: Request, res: Response) => {
     try {
         const result = await Order.aggregate([
             {
-                $unwind: "$order_items"
+                $lookup: {
+                    from: 'orderitems', // This should match your OrderItem collection name in MongoDB
+                    localField: 'order_items',
+                    foreignField: '_id',
+                    as: 'items'
+                }
+            },
+            {
+                $unwind: '$items'
             },
             {
                 $group: {
                     _id: {
-                        date: { $dateToString: { format: "%Y-%m-%d", date: "$created_at" } }
+                        date: {
+                            $dateToString: { format: "%Y-%m-%d", date: "$created_at" }
+                        }
                     },
-                    sum: { $sum: { $multiply: ["$order_items.price", "$order_items.quantity"] } }
+                    sum: { $sum: { $multiply: ['$items.price', '$items.quantity'] } }
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    date: "$_id.date",
+                    date: '$_id.date',
                     sum: 1
                 }
             },
