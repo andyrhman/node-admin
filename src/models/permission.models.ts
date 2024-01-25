@@ -1,6 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IPermission extends Document {
+export interface IPermission extends mongoose.Document {
   _id: string;
   name: string;
 }

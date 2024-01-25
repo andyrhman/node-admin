@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { IPermission } from './permission.models';
 
-export interface IRole extends Document {
+export interface IRole extends mongoose.Document {
   _id: string;
   name: string;
   permissions: IPermission[]; 

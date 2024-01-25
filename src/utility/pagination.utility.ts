@@ -1,6 +1,6 @@
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 
-export const paginate = async <T extends Document>(model: Model<T>, page = 1, limit = 10, query = {}, sort = {}) => {
+export const paginate = async <T extends mongoose.Document>(model: Model<T>, page = 1, limit = 10, query = {}, sort = {}) => {
     const skip = (page - 1) * limit;
     const countPromise = model.countDocuments(query).exec();
     const findPromise = model.find(query).sort(sort).skip(skip).limit(limit).exec();

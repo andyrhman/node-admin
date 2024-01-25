@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { IOrderItem, OrderItemSchema } from "./order-item.models";
 
-export interface IOrder extends Document {
+export interface IOrder extends mongoose.Document {
     _id: string;
     name: string;
     email: string;

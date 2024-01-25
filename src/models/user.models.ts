@@ -1,8 +1,8 @@
-import mongoose, { Schema, Document as MongooseDocument } from 'mongoose';
+import mongoose, { Schema} from 'mongoose';
 import { IRole } from './role.models';
 
 // Step 1: Define the TypeScript interface for the User model
-export interface IUser extends Document {
+export interface IUser extends mongoose.Document {
   _id: string
   fullName: string;
   username: string;
