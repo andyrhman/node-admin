@@ -18,7 +18,8 @@ export const myDataSource = new DataSource({
         "src/entity/*.ts"
     ],
     logging: false,
-    synchronize: true
+    synchronize: true,
+    ssl: true
 });
 
 const app = express();
