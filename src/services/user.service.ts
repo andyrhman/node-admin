@@ -1,9 +1,8 @@
 import { AbstractService } from "../common/abstract.service";
-import { User } from "../entity/user.entity";
-import { myDataSource } from "../index";
+import { myPrisma } from "../index";
 
-export class UserService extends AbstractService<User> {
+export class UserService extends AbstractService<any> {
     constructor() {
-        super(myDataSource.getRepository(User));
+        super(myPrisma, myPrisma.user);
     }
 }

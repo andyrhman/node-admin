@@ -1,6 +1,5 @@
 import { myDataSource } from './../index';
 import { Request, Response } from 'express';
-import { UserService } from '../services/auth.service';
 import * as argon2 from 'argon2';
 import { User } from '../entity/user.entity';
 import { sign } from 'jsonwebtoken';
@@ -9,6 +8,8 @@ import { validate } from 'class-validator';
 import { RegisterDto } from '../validation/dto/register.dto';
 import { formatValidationErrors } from '../utility/validation.utility';
 import { UpdateInfoDTO } from '../validation/dto/update-info.dto';
+import { myPrisma } from './../index';
+import { UserService } from '../services/user.service';
 
 // ? https://www.phind.com/agent?cache=clr3id9pk0002l907s609rc5r&source=sidebar
 /**
@@ -41,24 +42,27 @@ export const Register = async (req: Request, res: Response) => {
         return res.status(400).json(formatValidationErrors(validationErrors));
     }
 
-    const userService = new UserService();
+    const existingUser = await myPrisma.user.findFirst({
+        where: {
+            OR: [
+                { email: body.email.toLowerCase() },
+                { username: body.username.toLowerCase() }
+            ]
+        }
+    });
 
-    const emailExists = await userService.findByEmail(body.email.toLowerCase());
-    const usernameExists = await userService.findByUsername(body.username.toLowerCase());
-    if (emailExists || usernameExists) {
+    if (existingUser) {
         return res.status(409).send({
             message: 'Email or username already exists'
         });
     }
-    const { password, ...user } = await userService.create({
-        fullName: body.fullname,
-        username: body.username.toLowerCase(),
-        email: body.email.toLowerCase(),
-        password: await argon2.hash(body.password),
-        role: {
-            id: 3,
-            name: '',
-            permissions: []
+
+    const { password, ...user } = await myPrisma.user.create({
+        data: {
+            fullName: body.fullname,
+            username: body.username.toLowerCase(),
+            email: body.email.toLowerCase(),
+            password: await argon2.hash(body.password),
         }
     });
 
@@ -193,7 +197,7 @@ export const AuthenticatedUser = async (req: Request, res: Response) => {
         // Handle the case where user is not set
         return res.status(401).send({ message: "Unauthenticated" });
     }
-    const { password, ...user } = req["user"]
+    const { password, ...user } = req["user"];
 
     res.send(user);
 };
@@ -219,7 +223,7 @@ export const Logout = async (req: Request, res: Response) => {
     });
     res.send({
         message: "Success"
-    })
+    });
 };
 
 /**
@@ -285,7 +289,7 @@ export const UpdateInfo = async (req: Request, res: Response) => {
     if (req.body.username && req.body.username !== existingUser.username) {
         const existingUserByUsername = await userService.findOne({ where: { username: req.body.username } });
         if (existingUserByUsername) {
-            return res.status(409).send({ message: "Username already exists" })
+            return res.status(409).send({ message: "Username already exists" });
         }
         existingUser.username = req.body.username;
     }

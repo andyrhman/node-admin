@@ -6,7 +6,11 @@ import { DataSource } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { ValidationMiddleware } from './middleware/validation.middleware';
 import swaggerDocs from './utility/swagger.utitlity';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from "./utility/apperror.utility";
+import { globalErrorHandler } from "./middleware/error.middleware";
 
+// ! TO BE DELETED
 export const myDataSource = new DataSource({
     type: "postgres",
     host: process.env.POSTGRES_HOST,
@@ -22,7 +26,15 @@ export const myDataSource = new DataSource({
     ssl: true
 });
 
+export const myPrisma = new PrismaClient();
+
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION! Continuing...');
+    console.error(err);
+});
+
 const app = express();
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(ValidationMiddleware);
@@ -35,10 +47,25 @@ app.use(cors({
 myDataSource.initialize().then(() => {
     routes(app);
 
+    app.all('*', (req, res, next) => {
+        next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+    });
+
+    app.use(globalErrorHandler);
+
+
     console.log("Database has been initialized!");
-    app.listen(8000, () => {
-        console.log('Server listening on port 8000');
-        swaggerDocs(app, 8000);
+    app.listen(process.env.PORT, () => {
+        console.log(`Server listening on port ${process.env.PORT}`);
+        swaggerDocs(app, parseInt(process.env.PORT));
+    });
+
+    process.on('unhandledRejection', (err: any) => {
+        console.error('UNHANDLED REJECTION! Continuing...');
+        console.error(err);
+        app.use((req, res, next) => {
+            next(err);
+        });
     });
 }).catch((err) => {
     console.error("Error during Data Source initialization:", err);
