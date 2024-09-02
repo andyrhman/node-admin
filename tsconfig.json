@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "commonjs",
+    "outDir": "./dist",
+    "module": "ES2022",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/seeder/**/*", "src/db/**/*"]
 }

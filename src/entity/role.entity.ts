@@ -3,13 +3,15 @@ import { Permission } from "./permission.entity";
 
 @Entity('roles')
 export class Role {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column({
+    type: 'varchar',
+  })
+  name: string;
 
-    
+
   @ManyToMany(() => Permission)
   @JoinTable({
     name: "role_permissions",

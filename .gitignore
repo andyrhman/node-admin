@@ -1,6 +1,9 @@
 # Node.js
 node_modules/
 uploads/*
+dist/
+src/db/migrations/*
+!src/db/migrations/Readme.md
 
 # Logs
 logs
@@ -64,3 +67,4 @@ jspm_packages
 # OS generated files
 .DS_Store
 Thumbs.db
+.vercel

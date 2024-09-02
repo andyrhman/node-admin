@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { UserService } from '../services/auth.service';
 import * as argon2 from 'argon2';
 import { User } from '../entity/user.entity';
-import { sign } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { RegisterDto } from '../validation/dto/register.dto';
@@ -37,7 +37,7 @@ export const Register = async (req: Request, res: Response) => {
     const validationErrors = await validate(input);
 
     if (validationErrors.length > 0) {
-        // Use the utility function to format and return the validation errors
+        // Use the utility function to format and return the validation errors.
         return res.status(400).json(formatValidationErrors(validationErrors));
     }
 
@@ -143,6 +143,9 @@ export const Login = async (req: Request, res: Response) => {
 
     const rememberMe = body.rememberMe; // Assuming rememberMe is sent as a boolean in the body
     const maxAge = rememberMe ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 1 year or 1 day
+
+    const { sign } = jwt;
+
 
     const token = sign(
         { id: user.id },

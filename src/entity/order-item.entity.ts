@@ -2,20 +2,20 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { Order } from "./order.entity";
 
 @Entity('order_items')
-export class OrderItem{
+export class OrderItem {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: "varchar" })
     product_title: string;
 
-    @Column()
+    @Column({ type: "int" })
     price: number;
 
-    @Column()
+    @Column({ type: "int" })
     quantity: number;
 
-    @ManyToOne(() => Order, order => order.order_item)
-    @JoinColumn({name: "order_id"})
-    order: Order;
+    @ManyToOne(() => Order, order => order.order_item, { lazy: true })
+    @JoinColumn({ name: "order_id" })
+    order: Promise<Order>;
 }

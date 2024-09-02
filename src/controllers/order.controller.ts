@@ -46,8 +46,8 @@ export const Orders = async (req: Request, res: Response) => {
         if (search) {
             const searchOrder = search.toString().toLowerCase();
 
-            result.data = result.data.filter(order => {
-                const orderMatches = order.order_item.some(orderItem => {
+            result.data = result.data.filter(async order => {
+                const orderMatches = (await order.order_item).some(orderItem => {
                     return orderItem.product_title.toLowerCase().includes(searchOrder);
                 });
                 return (
@@ -97,12 +97,12 @@ export const Export = async (req: Request, res: Response) => {
 
     const repository = myDataSource.getRepository(Order);
 
-    const orders = await repository.find({ relations: ['order_item'] })
+    const orders = await repository.find({ relations: ['order_item'] });
 
     const json = [];
 
-    orders.forEach((o: Order) => {
-        o.order_item.forEach((i: OrderItem) => {
+    orders.forEach(async (o: Order) => {
+        (await o.order_item).forEach((i: OrderItem) => {
             json.push({
                 ID: o.id,
                 Name: o.name,
@@ -167,7 +167,7 @@ export const Chart = async (req: Request, res: Response) => {
         JOIN order_items i on o.id = i.order_id
         GROUP BY TO_CHAR(o.created_at, 'YYYY-MM-DD')
         ORDER BY TO_CHAR(o.created_at, 'YYYY-MM-DD') ASC;    
-    `)
+    `);
 
     res.send(result);
 };

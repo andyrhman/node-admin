@@ -1,5 +1,6 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
 import { DataSource } from "typeorm";
+dotenv.config();
 
 export const mySeeder = new DataSource({
     type: "postgres",
@@ -12,5 +13,6 @@ export const mySeeder = new DataSource({
         "src/entity/*.ts"
     ],
     logging: false,
-    synchronize: true
+    synchronize: true,
+    ssl: true
 });

@@ -6,20 +6,21 @@ export class Order {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: "varchar" })
     name: string;
 
-    @Column()
+    @Column({ type: "varchar" })
     email: string;
 
     @CreateDateColumn()
     created_at: string;
 
-    @OneToMany(() => OrderItem, orderItem => orderItem.order)
-    order_item: OrderItem[];
+    @OneToMany(() => OrderItem, orderItem => orderItem.order, { lazy: true })
+    order_item: Promise<OrderItem[]>;
 
-    get total(): number {
-        return this.order_item.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    async total(): Promise<number> {
+        const items = await this.order_item;
+        return items.reduce((sum, i) => sum + i.quantity * i.price, 0);
     }
     /*
         ? If the first and last name name is separated

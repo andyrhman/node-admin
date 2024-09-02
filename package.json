@@ -4,11 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.ts",
-    "roles:seed": "ts-node src/seeder/role.seeder.ts",
-    "products:seed": "ts-node src/seeder/product.seeder.ts",
-    "orders:seed": "ts-node src/seeder/order.seeder.ts"
+    "build": "set NODE_ENV=production && tsc",
+    "postbuild": "node addJsExtensions.mjs",
+    "dev": "set NODE_ENV=development && nodemon --exec npx tsx src/index.ts",
+    "start": "set NODE_ENV=production && node dist/index.js",
+    "roles:seed": "npx tsx src/seeder/role.seeder.ts",
+    "products:seed": "npx tsx src/seeder/product.seeder.ts",
+    "orders:seed": "npx tsx src/seeder/order.seeder.ts",
+    "typeorm": "npx tsx --require tsconfig-paths/register ./node_modules/typeorm/cli",
+    "migration:run": "npm run typeorm migration:run -- -d ./src/db/typeorm.config.ts",
+    "migration:generate": "npm run typeorm -- -d ./src/db/typeorm.config.ts migration:generate ./src/db/migrations/$npm_config_name",
+    "migration:create": "npm run typeorm -- migration:create ./src/db/migrations/$npm_config_name",
+    "migration:revert": "npm run typeorm -- -d ./src/db/typeorm.config.ts migration:revert",
+    "migration:show": "npm run typeorm -- migration:show -d ./src/db/typeorm.config.ts"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,6 +33,8 @@
     "@types/swagger-ui-express": "^4.1.6",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {

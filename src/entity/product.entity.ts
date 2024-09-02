@@ -5,16 +5,16 @@ export class Product {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     title: string;
 
-    @Column()
-    description: string;  
+    @Column({ type: 'varchar' })
+    description: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     image: string;
 
-    @Column()
+    @Column({type: 'int'})
     price: number;
 
     @CreateDateColumn()
