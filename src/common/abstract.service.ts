@@ -33,7 +33,8 @@ export abstract class AbstractService<T> {
             where: { id },
         });
     }
-
+    
+    // ! NOT WORKING
     async findOne(options: any, relations: string[] = []): Promise<T | null> {
         return this.model.findUnique({
             where: options,

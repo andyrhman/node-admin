@@ -1,5 +1,5 @@
 import { AbstractService } from "../common/abstract.service";
-import { myPrisma } from "../index";
+import { myPrisma } from "../config/db.config";
 
 export class UserService extends AbstractService<any> {
     constructor() {

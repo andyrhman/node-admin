@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { myDataSource } from "../index";
-import { User } from "../entity/user.entity";
-import { verify } from "jsonwebtoken";
+import { myPrisma } from "../config/db.config";
+import jwt from 'jsonwebtoken';
 
 export const AuthMiddleware = async (req: Request, res: Response, next: Function) => {
     try {
-        const jwt = req.cookies['user_session'];
+        const mySession = req.cookies['user_session'];
 
-        const payload: any = verify(jwt, process.env.JWT_SECRET);
+        const { verify } = jwt;
+        const payload: any = verify(mySession, process.env.JWT_SECRET);
 
         if (!payload) {
             return res.status(401).send({
@@ -15,8 +15,7 @@ export const AuthMiddleware = async (req: Request, res: Response, next: Function
             });
         };
 
-        const repository = myDataSource.getRepository(User);
-        req["user"] = await repository.findOne({ where: { id: payload.id }, relations:['role', 'role.permissions']});
+        req["user"] = await myPrisma.user.findUnique({ where: { id: payload.id }, include: { role: { include: { permissions: true } } } });
 
         next();
     } catch (error) {
@@ -24,4 +23,4 @@ export const AuthMiddleware = async (req: Request, res: Response, next: Function
             message: "Unauthenticated"
         });
     }
-}
+};

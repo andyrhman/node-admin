@@ -1,15 +1,13 @@
-import { myDataSource } from './../index';
 import { Request, Response } from 'express';
 import * as argon2 from 'argon2';
-import { User } from '../entity/user.entity';
-import { sign } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { RegisterDto } from '../validation/dto/register.dto';
 import { formatValidationErrors } from '../utility/validation.utility';
 import { UpdateInfoDTO } from '../validation/dto/update-info.dto';
-import { myPrisma } from './../index';
-import { UserService } from '../services/user.service';
+import { myPrisma } from '../config/db.config';
+import { UpdatePasswordDTO } from '../validation/dto/update-password.dto';
 
 // ? https://www.phind.com/agent?cache=clr3id9pk0002l907s609rc5r&source=sidebar
 /**
@@ -63,6 +61,7 @@ export const Register = async (req: Request, res: Response) => {
             username: body.username.toLowerCase(),
             email: body.email.toLowerCase(),
             password: await argon2.hash(body.password),
+            roleId: 3
         }
     });
 
@@ -109,19 +108,17 @@ export const Register = async (req: Request, res: Response) => {
 export const Login = async (req: Request, res: Response) => {
     const body = req.body;
 
-    const userService = new UserService();
-    let user: User;
+    let user = undefined;
 
-    // Check whether to find the user by email or username based on input.
     if (body.email) {
-        user = await userService.findByEmail(body.email.toLowerCase());
+        user = await myPrisma.user.findUnique({ where: { email: body.email.toLowerCase() } });
         if (!body.email) {
             return res.status(404).send({
                 message: "Invalid credentials!"
             });
         }
     } else if (body.username) {
-        user = await userService.findByUsername(body.username.toLowerCase());
+        user = await myPrisma.user.findUnique({ where: { username: body.username.toLowerCase() } });
         if (!body.username) {
             return res.status(404).send({
                 message: "Invalid credentials!"
@@ -148,6 +145,7 @@ export const Login = async (req: Request, res: Response) => {
     const rememberMe = body.rememberMe; // Assuming rememberMe is sent as a boolean in the body
     const maxAge = rememberMe ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 1 year or 1 day
 
+    const { sign } = jwt;
     const token = sign(
         { id: user.id },
         process.env.JWT_SECRET,
@@ -270,16 +268,14 @@ export const UpdateInfo = async (req: Request, res: Response) => {
         return res.status(400).json(formatValidationErrors(validationErrors));
     }
 
-    const userService = myDataSource.getRepository(User);
-
-    const existingUser = await userService.findOne({ where: { id: user.id } });
+    const existingUser = await myPrisma.user.findUnique({ where: { id: user.id } });
 
     if (req.body.fullname) {
         existingUser.fullName = req.body.fullname;
     }
 
     if (req.body.email && req.body.email !== existingUser.email) {
-        const existingUserByEmail = await userService.findOne({ where: { email: req.body.email } });
+        const existingUserByEmail = await myPrisma.user.findUnique({ where: { email: req.body.email } });
         if (existingUserByEmail) {
             return res.status(409).send({ message: "Email already exists" });
         }
@@ -287,16 +283,19 @@ export const UpdateInfo = async (req: Request, res: Response) => {
     }
 
     if (req.body.username && req.body.username !== existingUser.username) {
-        const existingUserByUsername = await userService.findOne({ where: { username: req.body.username } });
+        const existingUserByUsername = await myPrisma.user.findUnique({ where: { username: req.body.username } });
         if (existingUserByUsername) {
             return res.status(409).send({ message: "Username already exists" });
         }
         existingUser.username = req.body.username;
     }
 
-    await userService.update(user.id, existingUser);
+    const updated = await myPrisma.user.update({
+        where: { id: user.id },
+        data: { ...existingUser }
+    });
 
-    const { password, ...data } = await userService.findOne({ where: { id: user.id } });
+    const { password, ...data } = updated;
     res.send(data);
 };
 
@@ -331,24 +330,20 @@ export const UpdateInfo = async (req: Request, res: Response) => {
  */
 export const UpdatePassword = async (req: Request, res: Response) => {
     const user = req["user"];
+    const body = req.body;
+    const input = plainToClass(UpdatePasswordDTO, body);
+    const validationErrors = await validate(input);
 
-    if (req.body.password !== req.body.password_confirm) {
-        return res.status(400).send({
-            message: "Password do not match"
-        });
-    } else if (!req.body.password || !req.body.password_confirm) {
-        return res.status(400).send({
-            message: "Password do not match"
-        });
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
     }
 
-    const repository = myDataSource.getRepository(User);
-
-    await repository.update(user.id, {
-        password: await argon2.hash(req.body.password)
+    const updated = await myPrisma.user.update({
+        where: { id: user.id },
+        data: { password: await argon2.hash(req.body.password) }
     });
 
-    const { password, ...data } = await repository.findOne({ where: { id: user.id } });
+    const { password, ...data } = updated;
 
     res.send(data);
 }

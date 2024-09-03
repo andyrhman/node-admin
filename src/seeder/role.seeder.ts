@@ -1,43 +1,52 @@
-import { Permission } from '../entity/permission.entity';
-import { Role } from '../entity/role.entity';
-import { mySeeder } from './db.config';
+import { PrismaClient } from '@prisma/client';
 
-mySeeder.initialize().then(async () => {
-    const permissionRepository = mySeeder.getRepository(Permission);
+const prisma = new PrismaClient();
 
-    const perms = ['view_users', 'edit_users', 'view_roles', 'edit_roles', 'view_products', 'edit_products', 'view_orders', 'edit_orders'];
+async function main() {
+    const perms = [
+        'view_users', 'edit_users', 'view_roles', 'edit_roles',
+        'view_products', 'edit_products', 'view_orders', 'edit_orders'
+    ];
 
-    let permissions = [];
+    const permissions = await Promise.all(
+        perms.map(name => prisma.permission.create({ data: { name } }))
+    );
 
-    for (let i = 0; i < perms.length; i++) {
-        permissions.push(await permissionRepository.save({
-            name: perms[i]
-        }));
-    }
-
-    const roleRepository = mySeeder.getRepository(Role);
-
-    await roleRepository.save({
-        name: 'Admin',
-        permissions
+    await prisma.role.create({
+        data: {
+            name: 'Admin',
+            permissions: {
+                connect: permissions.map(p => ({ id: p.id }))
+            }
+        }
     });
 
-    delete permissions[3];
-    await roleRepository.save({
-        name: 'Editor',
-        permissions
+    await prisma.role.create({
+        data: {
+            name: 'Editor',
+            permissions: {
+                connect: permissions.filter((_, i) => i !== 3).map(p => ({ id: p.id }))
+            }
+        }
     });
 
-    delete permissions[1];
-    delete permissions[5];
-    delete permissions[7];
-    await roleRepository.save({
-        name: 'Viewer',
-        permissions
+    await prisma.role.create({
+        data: {
+            name: 'Viewer',
+            permissions: {
+                connect: permissions.filter((_, i) => i !== 1 && i !== 3 && i !== 5 && i !== 7).map(p => ({ id: p.id }))
+            }
+        }
     });
 
     console.log('Seeding complete!');
-    process.exit(0);
-}).catch((err) => {
-    console.error("Error during Data Source initialization:", err);
-});
+}
+
+main()
+    .catch(e => {
+        console.error(e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

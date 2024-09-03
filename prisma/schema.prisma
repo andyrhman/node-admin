@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -19,14 +20,26 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
-  createdAt DateTime @default(now())
-  // roleId    Int
-  // role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  roleId    Int
+  role      Role     @relation(fields: [roleId], references: [id])
+
+  @@map("users")
 }
 
-// model Role {
-//   id          Int      @id @default(autoincrement())
-//   name        String
-//   permissions String[]
-//   users       User[]
-// }
+model Role {
+  id         Int          @id @default(autoincrement())
+  name       String
+  users      User[]
+  permissions Permission[] @relation("RolePermissions")
+
+  @@map("roles")
+}
+
+model Permission {
+  id   Int      @id @default(autoincrement())
+  name String
+  roles Role[]  @relation("RolePermissions")
+
+  @@map("permissions")
+}

@@ -6,7 +6,6 @@ import { DataSource } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { ValidationMiddleware } from './middleware/validation.middleware';
 import swaggerDocs from './utility/swagger.utitlity';
-import { PrismaClient } from '@prisma/client';
 import { AppError } from "./utility/apperror.utility";
 import { globalErrorHandler } from "./middleware/error.middleware";
 
@@ -26,7 +25,6 @@ export const myDataSource = new DataSource({
     ssl: true
 });
 
-export const myPrisma = new PrismaClient();
 
 process.on('uncaughtException', (err) => {
     console.error('UNCAUGHT EXCEPTION! Continuing...');
@@ -43,30 +41,23 @@ app.use(cors({
     origin: [`${process.env.CORS_ORIGIN}`]
 }));
 
-// Initialize TypeORM connection and start the Express server
-myDataSource.initialize().then(() => {
-    routes(app);
+routes(app);
 
-    app.all('*', (req, res, next) => {
-        next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+app.all('*', (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
+
+app.listen(process.env.PORT, () => {
+    console.log(`Server listening on port ${process.env.PORT}`);
+    swaggerDocs(app, parseInt(process.env.PORT));
+});
+
+process.on('unhandledRejection', (err: any) => {
+    console.error('UNHANDLED REJECTION! Continuing...');
+    console.error(err);
+    app.use((req, res, next) => {
+        next(err);
     });
-
-    app.use(globalErrorHandler);
-
-
-    console.log("Database has been initialized!");
-    app.listen(process.env.PORT, () => {
-        console.log(`Server listening on port ${process.env.PORT}`);
-        swaggerDocs(app, parseInt(process.env.PORT));
-    });
-
-    process.on('unhandledRejection', (err: any) => {
-        console.error('UNHANDLED REJECTION! Continuing...');
-        console.error(err);
-        app.use((req, res, next) => {
-            next(err);
-        });
-    });
-}).catch((err) => {
-    console.error("Error during Data Source initialization:", err);
 });
