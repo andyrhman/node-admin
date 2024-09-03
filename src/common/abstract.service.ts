@@ -33,7 +33,7 @@ export abstract class AbstractService<T> {
             where: { id },
         });
     }
-    
+
     // ! NOT WORKING
     async findOne(options: any, relations: string[] = []): Promise<T | null> {
         return this.model.findUnique({
@@ -82,7 +82,12 @@ export abstract class AbstractService<T> {
 
     private getRelations(relations: string[]): any {
         return relations.reduce((acc, relation) => {
-            acc[relation] = true;
+            const [relationName, subRelation] = relation.split('.');
+            if (subRelation) {
+                acc[relationName] = { include: { [subRelation]: true } };
+            } else {
+                acc[relationName] = true;
+            }
             return acc;
         }, {});
     }

@@ -4,6 +4,7 @@ import { AuthMiddleware } from "./middleware/auth.middleware";
 import { AuthenticatedUser } from "./controllers/auth.controller";
 import { Upload } from "./controllers/image.controller";
 import { PermissionMiddleware } from "./middleware/permission.middleware";
+import { CreateUser, DeleteUser, GetUser, UpdateUser, Users } from "./controllers/user.controller";
 
 export const routes = (router: Router) => {
     router.post('/api/register', Register);
@@ -13,11 +14,11 @@ export const routes = (router: Router) => {
     router.put('/api/user/info', AuthMiddleware, UpdateInfo);
     router.put('/api/user/password', AuthMiddleware, UpdatePassword);
 
-    // router.get('/api/users', AuthMiddleware, PermissionMiddleware('users'), Users);
-    // router.post('/api/users', AuthMiddleware, PermissionMiddleware('users'), CreateUser);
-    // router.get('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), GetUser);
-    // router.put('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), UpdateUser);
-    // router.delete('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), DeleteUser);
+    router.get('/api/users', AuthMiddleware, PermissionMiddleware('users'), Users);
+    router.post('/api/users', AuthMiddleware, PermissionMiddleware('users'), CreateUser);
+    router.get('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), GetUser);
+    router.put('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), UpdateUser);
+    router.delete('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), DeleteUser);
 
     // router.get('/api/permissions', AuthMiddleware, Permissions);
 
