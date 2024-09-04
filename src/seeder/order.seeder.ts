@@ -1,30 +1,36 @@
 import { randomInt } from 'crypto';
-import { OrderItem } from '../entity/order-item.entity';
-import { Order } from '../entity/order.entity';
-import { mySeeder } from './db.config';
 import { fakerID_ID as faker } from "@faker-js/faker";
+import { PrismaClient } from '@prisma/client';
 
-mySeeder.initialize().then(async () => {
-    const orderRepository = mySeeder.getRepository(Order);
-    const orderItemRepository = mySeeder.getRepository(OrderItem);
+const prisma = new PrismaClient();
 
+async function main() {
     for (let i = 0; i < 30; i++) {
-        const order = await orderRepository.save({
-            name: faker.person.fullName(),
-            email: faker.internet.email(),
-        })
+        const order = await prisma.order.create({
+            data: {
+                name: faker.person.fullName(),
+                email: faker.internet.email(),
+            }
+        });
         for (let i = 0; i < randomInt(1, 5); i++) {
-            await orderItemRepository.save({
-                order: order,
-                product_title: faker.commerce.productName(),
-                price: parseInt(faker.commerce.price({ min: 100, max: 1000, dec: 0 }), 10),
-                quantity: randomInt(1, 5)
-            })
+            await prisma.orderItem.create({
+                data: {
+                    order_id: order.id,
+                    productTitle: faker.commerce.productName(),
+                    price: parseInt(faker.commerce.price({ min: 100, max: 1000, dec: 0 }), 10),
+                    quantity: randomInt(1, 5)
+                }
+            });
         }
     }
 
     console.log('Seeding complete!');
-    process.exit(0);
-}).catch((err) => {
-    console.error("Error during Data Source initialization:", err);
-});
+}
+main()
+    .catch(e => {
+        console.error(e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

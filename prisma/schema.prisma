@@ -55,3 +55,25 @@ model Product {
 
   @@map("products")
 }
+
+model Order {
+  id        String      @id @default(uuid())
+  name      String
+  email     String
+  created_at DateTime    @default(now())
+  orderItems OrderItem[] @relation("OrderToOrderItems")
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String   @id @default(uuid())
+  productTitle String   @map("product_title")
+  price        Float
+  quantity     Int
+  order_id     String
+  order        Order    @relation(fields: [order_id], references: [id], onDelete: Cascade, name: "OrderToOrderItems")
+
+  @@map("order_items")
+}
+
