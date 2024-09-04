@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { OrderService } from "../services/order.service";
 import sanitizeHtml from "sanitize-html";
 import { Parser } from "@json2csv/plainjs";
 import { myPrisma } from "../config/db.config";
