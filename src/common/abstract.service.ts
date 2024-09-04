@@ -80,7 +80,7 @@ export abstract class AbstractService<T> {
         };
     }
 
-    private getRelations(relations: string[]): any {
+    public getRelations(relations: string[]): any {
         return relations.reduce((acc, relation) => {
             const [relationName, subRelation] = relation.split('.');
             if (subRelation) {
