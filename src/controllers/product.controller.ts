@@ -1,78 +1,77 @@
-// import { Request, Response } from "express"
-// import { myDataSource } from "../index"
-// import { plainToClass } from "class-transformer";
-// import { isUUID, validate } from "class-validator";
-// import { formatValidationErrors } from "../utility/validation.utility";
-// import { Product } from "../entity/product.entity";
-// import { ProductCreateDto } from "../validation/dto/create-product.dto";
-// import { ProductUpdateDto } from "../validation/dto/update-product.dto";
-// import { ProductService } from "../services/product.service";
-// import sanitizeHtml from 'sanitize-html';
+import { Request, Response } from "express";
+import { myPrisma } from "../config/db.config";
+import { plainToClass } from "class-transformer";
+import { isUUID, validate } from "class-validator";
+import { formatValidationErrors } from "../utility/validation.utility";
+import { ProductCreateDto } from "../validation/dto/create-product.dto";
+import { ProductUpdateDto } from "../validation/dto/update-product.dto";
+import { ProductService } from "../services/product.service";
+import sanitizeHtml from 'sanitize-html';
 
-// // ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
-// /**
-//  * @swagger
-//  * /api/products:
-//  *   get:
-//  *     tags:
-//  *       - Products
-//  *     summary: Retrieve a list of products
-//  *     description: Retrieve a list of products with optional search criteria. Returns a list of products or a 404 status code if no matching products are found.
-//  *     parameters:
-//  *       - in: query
-//  *         name: page
-//  *         schema:
-//  *           type: integer
-//  *           default: 1
-//  *         description: Page number for pagination
-//  *       - in: query
-//  *         name: search
-//  *         schema:
-//  *           type: string
-//  *         description: Search term for filtering products
-//  *     responses:
-//  *       200:
-//  *         description: A list of products.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 data:
-//  *                   type: array
-//  *                   items:
-//  *                     $ref: '#/components/schemas/Product'
-//  *       404:
-//  *         description: No products found matching the search criteria.
-//  */
-// export const Products = async (req: Request, res: Response) => {
-//     const repository = new ProductService();
-//     const take = 10;
-//     const page = parseInt(req.query.page as string || '1');
-//     let search = req.query.search;
+// ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     tags:
+ *       - Products
+ *     summary: Retrieve a list of products
+ *     description: Retrieve a list of products with optional search criteria. Returns a list of products or a 404 status code if no matching products are found.
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for filtering products
+ *     responses:
+ *       200:
+ *         description: A list of products.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: No products found matching the search criteria.
+ */
+export const Products = async (req: Request, res: Response) => {
+    const repository = new ProductService();
+    const take = 10;
+    const page = parseInt(req.query.page as string || '1');
+    let search = req.query.search;
 
-//     let result = await repository.paginate({}, page, take);
+    let result = await repository.paginate(page, take);
 
-//     // https://www.phind.com/search?cache=za3cyqzb06bugle970v91phl
-//     if (typeof search === 'string') {
-//         search = sanitizeHtml(search);
-//         if (search) {
-//             const search2 = search.toString().toLowerCase();
-//             result.data = result.data.filter(
-//                 p => p.title.toLowerCase().indexOf(search2) >= 0 ||
-//                     p.description.toLowerCase().indexOf(search2) >= 0
-//             );
-    
-//             // Check if the resulting filtered data array is empty
-//             if (result.data.length === 0) {
-//                 // Respond with a 404 status code and a message
-//                 return res.status(404).json({ message: `No ${search} matching your search criteria.` });
-//             }
-//         }
-//     }
+    // https://www.phind.com/search?cache=za3cyqzb06bugle970v91phl
+    if (typeof search === 'string') {
+        search = sanitizeHtml(search);
+        if (search) {
+            const search2 = search.toString().toLowerCase();
+            result.data = result.data.filter(
+                p => p.title.toLowerCase().indexOf(search2) >= 0 ||
+                    p.description.toLowerCase().indexOf(search2) >= 0
+            );
 
-//     res.send(result);
-// };
+            // Check if the resulting filtered data array is empty
+            if (result.data.length === 0) {
+                // Respond with a 404 status code and a message
+                return res.status(404).json({ message: `No ${search} matching your search criteria.` });
+            }
+        }
+    }
+
+    res.send(result);
+};
 
 // /**
 //  * @swagger

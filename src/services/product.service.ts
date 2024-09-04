@@ -1,9 +1,8 @@
-// import { AbstractService } from "../common/abstract.service";
-// import { Product } from "../entity/product.entity";
-// import { myDataSource } from "../index";
+import { myPrisma } from "../config/db.config";
+import { AbstractService } from "../common/abstract.service";
 
-// export class ProductService extends AbstractService<Product> {
-//     constructor() {
-//         super(myDataSource.getRepository(Product));
-//     }
-// }
+export class ProductService extends AbstractService<any> {
+    constructor() {
+        super(myPrisma, myPrisma.product);
+    }
+}

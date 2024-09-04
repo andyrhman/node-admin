@@ -43,3 +43,15 @@ model Permission {
 
   @@map("permissions")
 }
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String   @default("https://static-00.iconduck.com/assets.00/slightly-smiling-face-emoji-2048x1974-5msgqz9c.png")
+  price       Float
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}

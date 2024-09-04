@@ -8,10 +8,10 @@ export class Product {
     @Column()
     title: string;
 
-    @Column()
+    @Column({type: 'text'})
     description: string;  
 
-    @Column()
+    @Column({default: "https://static-00.iconduck.com/assets.00/slightly-smiling-face-emoji-2048x1974-5msgqz9c.png"})
     image: string;
 
     @Column()
