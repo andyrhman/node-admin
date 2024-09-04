@@ -73,156 +73,151 @@ export const Products = async (req: Request, res: Response) => {
     res.send(result);
 };
 
-// /**
-//  * @swagger
-//  * /api/products:
-//  *   post:
-//  *     tags:
-//  *       - Products
-//  *     summary: Create a new product
-//  *     description: Create a new product with the provided data.
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/ProductCreateDto'
-//  *     responses:
-//  *       201:
-//  *         description: The product was successfully created.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/Product'
-//  *       400:
-//  *         description: Validation error.
-//  */
-// export const CreateProduct = async (req: Request, res: Response) => {
-//     const body = req.body;
-//     const input = plainToClass(ProductCreateDto, body);
-//     const validationErrors = await validate(input);
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     tags:
+ *       - Products
+ *     summary: Create a new product
+ *     description: Create a new product with the provided data.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductCreateDto'
+ *     responses:
+ *       201:
+ *         description: The product was successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation error.
+ */
+export const CreateProduct = async (req: Request, res: Response) => {
+    const body = req.body;
+    const input = plainToClass(ProductCreateDto, body);
+    const validationErrors = await validate(input);
 
-//     if (validationErrors.length > 0) {
-//         return res.status(400).json(formatValidationErrors(validationErrors));
-//     }
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
 
-//     const repository = myDataSource.getRepository(Product);
+    const product = await myPrisma.product.create({ data: { ...body } });
 
-//     const product = await repository.save(body);
+    res.status(201).send(product);
+};
 
-//     res.status(201).send(product);
-// }
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Get a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the product to get
+ *     responses:
+ *       200:
+ *         description: The product description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GetProduct'
+ *       400:
+ *         description: Not Allowed
+ */
+export const GetProduct = async (req: Request, res: Response) => {
+    if (!isUUID(req.params.id)) {
+        return res.status(400).send({ message: "Not Allowed" });
+    }
 
-// /**
-//  * @swagger
-//  * /api/products/{id}:
-//  *   get:
-//  *     summary: Get a product by ID
-//  *     tags: [Products]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         schema:
-//  *           type: string
-//  *         required: true
-//  *         description: UUID of the product to get
-//  *     responses:
-//  *       200:
-//  *         description: The product description by id
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/GetProduct'
-//  *       400:
-//  *         description: Not Allowed
-//  */
-// export const GetProduct = async (req: Request, res: Response) => {
-//     if (!isUUID(req.params.id)) {
-//         return res.status(400).send({ message: "Not Allowed" })
-//     }
-//     const repository = myDataSource.getRepository(Product);
+    res.send(await myPrisma.product.findUnique({ where: { id: req.params.id } }));
+};
 
-//     res.send(await repository.findOne({ where: { id: req.params.id } }));
-// }
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   put:
+ *     summary: Update a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the product to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductUpdateDto'
+ *     responses:
+ *       202:
+ *         description: The product was updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation error or not allowed
+ *       404:
+ *         description: The product was not found
+ */
+export const UpdateProduct = async (req: Request, res: Response) => {
+    if (!isUUID(req.params.id)) {
+        return res.status(400).send({ message: "Not Allowed" });
+    }
+    const body = req.body;
+    const input = plainToClass(ProductUpdateDto, body);
+    const validationErrors = await validate(input);
 
-// /**
-//  * @swagger
-//  * /api/products/{id}:
-//  *   put:
-//  *     summary: Update a product by ID
-//  *     tags: [Products]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         schema:
-//  *           type: string
-//  *         required: true
-//  *         description: UUID of the product to update
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/ProductUpdateDto'
-//  *     responses:
-//  *       202:
-//  *         description: The product was updated
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/Product'
-//  *       400:
-//  *         description: Validation error or not allowed
-//  *       404:
-//  *         description: The product was not found
-//  */
-// export const UpdateProduct = async (req: Request, res: Response) => {
-//     if (!isUUID(req.params.id)) {
-//         return res.status(400).send({ message: "Not Allowed" })
-//     }
-//     const body = req.body;
-//     const input = plainToClass(ProductUpdateDto, body);
-//     const validationErrors = await validate(input);
+    if (validationErrors.length > 0) {
+        return res.status(400).json(formatValidationErrors(validationErrors));
+    }
 
-//     if (validationErrors.length > 0) {
-//         return res.status(400).json(formatValidationErrors(validationErrors));
-//     }
-//     const repository = myDataSource.getRepository(Product);
+    const updated = await myPrisma.product.update({ where: { id: req.params.id }, data: { ...body } });
 
-//     await repository.update(req.params.id, body);
+    res.status(202).send(updated);
+};
 
-//     res.status(202).send(await repository.findOne({ where: { id: req.params.id } }));
-// }
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Delete a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the product to delete
+ *     responses:
+ *       204:
+ *         description: The product was deleted successfully
+ *       400:
+ *         description: Not Allowed - Invalid UUID
+ *       404:
+ *         description: The product was not found
+ */
+export const DeleteProduct = async (req: Request, res: Response) => {
+    if (!isUUID(req.params.id)) {
+        return res.status(400).send({ message: "Not Allowed" });
+    }
 
-// /**
-//  * @swagger
-//  * /api/products/{id}:
-//  *   delete:
-//  *     summary: Delete a product by ID
-//  *     tags: [Products]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         schema:
-//  *           type: string
-//  *         required: true
-//  *         description: UUID of the product to delete
-//  *     responses:
-//  *       204:
-//  *         description: The product was deleted successfully
-//  *       400:
-//  *         description: Not Allowed - Invalid UUID
-//  *       404:
-//  *         description: The product was not found
-//  */
-// export const DeleteProduct = async (req: Request, res: Response) => {
-//     if (!isUUID(req.params.id)) {
-//         return res.status(400).send({ message: "Not Allowed" })
-//     }
-//     const repository = myDataSource.getRepository(Product);
+    await myPrisma.product.delete({ where: { id: req.params.id } });
 
-//     await repository.delete(req.params.id);
-
-//     res.status(204).send(null);
-// }
+    res.status(204).send(null);
+}
 
