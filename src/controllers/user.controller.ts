@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import { myDataSource } from "../index";
-import { User } from "../entity/user.entity";
 import { plainToClass } from "class-transformer";
 import { CreateUserDTO } from "../validation/dto/create-user.dto";
 import { isUUID, validate } from "class-validator";
 import { formatValidationErrors } from "../utility/validation.utility";
 import * as argon2 from "argon2";
-import { Role } from "../entity/role.entity";
 import { UpdateUserDTO } from "../validation/dto/update-user.dto";
 import { UserService } from "../services/user.service";
 import sanitizeHtml from "sanitize-html";
