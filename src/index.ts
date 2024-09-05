@@ -1,4 +1,4 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import { routes } from './routes';
@@ -7,6 +7,8 @@ import { ValidationMiddleware } from './middleware/validation.middleware';
 import swaggerDocs from './utility/swagger.utitlity';
 import { AppError } from "./utility/apperror.utility";
 import { globalErrorHandler } from "./middleware/error.middleware";
+
+dotenv.config();
 
 process.on('uncaughtException', (err) => {
     console.error('UNCAUGHT EXCEPTION! Continuing...');

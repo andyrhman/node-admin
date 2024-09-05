@@ -57,6 +57,12 @@ To apply your Prisma schema to the database, run:
 npx prisma migrate dev --name init
 ```
 
+For Production please use
+
+```bash
+npx prisma migrate deploy
+```
+
 This command creates the necessary database tables and applies your schema.
 
 ## 5. Generate Prisma Client
