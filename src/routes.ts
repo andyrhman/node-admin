@@ -2,7 +2,7 @@ import { Login, Logout, Register, UpdateInfo, UpdatePassword } from "./controlle
 import express, { Router } from "express";
 import { AuthMiddleware } from "./middleware/auth.middleware";
 import { AuthenticatedUser } from "./controllers/auth.controller";
-import { Upload } from "./controllers/image.controller";
+import { CreateProductWithImage, Upload } from "./controllers/image.controller";
 import { PermissionMiddleware } from "./middleware/permission.middleware";
 import { CreateUser, DeleteUser, GetUser, UpdateUser, Users } from "./controllers/user.controller";
 import { AddRolePermissions, Permissions, RemoveRolePermissions } from "./controllers/permission.controller";
@@ -39,6 +39,7 @@ export const routes = (router: Router) => {
     router.get('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), GetProduct);
     router.put('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), UpdateProduct);
     router.delete('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), DeleteProduct);
+    router.post('/api/productwithimage', AuthMiddleware, CreateProductWithImage);
 
     router.post('/api/upload', AuthMiddleware, Upload);
     router.use('/api/uploads', express.static('./uploads'));

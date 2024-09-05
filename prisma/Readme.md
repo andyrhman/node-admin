@@ -54,7 +54,7 @@ DATABASE_URL="postgresql://<username>:<password>@<host>:<port>/<database>"
 To apply your Prisma schema to the database, run:
 
 ```bash
-npx prisma migrate dev --name init
+npx prisma migrate dev --name <type here the name>
 ```
 
 This command creates the necessary database tables and applies your schema.
