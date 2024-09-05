@@ -8,9 +8,9 @@
     "postbuild": "node build.mjs",
     "dev": "set NODE_ENV=development && nodemon --exec npx tsx src/index.ts",
     "start": "set NODE_ENV=production && node dist/index.js",
-    "roles:seed": "ts-node src/seeder/role.seeder.ts",
-    "products:seed": "ts-node src/seeder/product.seeder.ts",
-    "orders:seed": "ts-node src/seeder/order.seeder.ts"
+    "roles:seed": "npx tsx src/seeder/role.seeder.ts",
+    "products:seed": "npx tsx src/seeder/product.seeder.ts",
+    "orders:seed": "npx tsx src/seeder/order.seeder.ts"
   },
   "type": "module",
   "keywords": [],

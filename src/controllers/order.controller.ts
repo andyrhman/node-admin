@@ -62,8 +62,6 @@ export const Orders = async (req: Request, res: Response) => {
         page,
         last_page: Math.ceil(total / perPage)
     });
-
-    res.send(result);
 };
 
 /**
