@@ -6,6 +6,7 @@ import { formatValidationErrors } from "../utility/validation.utility";
 import { ProductCreateDto } from "../validation/dto/create-product.dto";
 import { ProductUpdateDto } from "../validation/dto/update-product.dto";
 import { ProductService } from "../services/product.service";
+import { v2 as cloudinary } from 'cloudinary';
 import sanitizeHtml from 'sanitize-html';
 
 // ? https://www.phind.com/search?cache=i2helomupthybetydx4fgtvt
@@ -216,8 +217,27 @@ export const DeleteProduct = async (req: Request, res: Response) => {
         return res.status(400).send({ message: "Not Allowed" });
     }
 
+    // Fetch the product to get the public_id of the image
+    const product = await myPrisma.product.findUnique({
+        where: { id: req.params.id },
+    });
+
+    if (!product) {
+        return res.status(404).send({ message: "Product not found" });
+    }
+
+    // Delete the image from Cloudinary
+    if (product.public_id) {
+        try {
+            await cloudinary.uploader.destroy(product.public_id);
+        } catch (err) {
+            return res.status(500).send({ message: "Failed to delete image from Cloudinary", error: err.message });
+        }
+    }
+
+    // Delete the product from the database
     await myPrisma.product.delete({ where: { id: req.params.id } });
 
     res.status(204).send(null);
-}
+};
 

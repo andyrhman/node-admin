@@ -1,10 +1,11 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import { routes } from './routes';
 import cookieParser from 'cookie-parser';
-import { ValidationMiddleware } from './middleware/validation.middleware';
 import swaggerDocs from './utility/swagger.utitlity';
+import cloudinary from "cloudinary";
+import { routes } from './routes';
+import { ValidationMiddleware } from './middleware/validation.middleware';
 import { AppError } from "./utility/apperror.utility";
 import { globalErrorHandler } from "./middleware/error.middleware";
 
@@ -16,6 +17,12 @@ process.on('uncaughtException', (err) => {
 });
 
 const app = express();
+
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 app.use(express.json());
 app.use(cookieParser());
