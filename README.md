@@ -8,7 +8,7 @@
 
 Provide a brief overview of your Node.js admin server, explaining its purpose and key features.
 
-### First Time Set Up & Configuration
+## First Time Set Up & Configuration
 
 Create the directory:
 
@@ -17,21 +17,192 @@ mkdir node-admin
 npm init -y
 ```
 
-Install some dependencies:
+## Using Sequelize
+
+Install sequelize:
 
 ```bash
-npm i -D typescript ts-node nodemon
-
-### Ignore this if you have installed typescript globally
-
-npm i -g typescript
+# Using PostgreSQL
+npm install sequelize sequelize-cli pg pg-hstore
 ```
-
-Typescript configuration:
 
 ```bash
-tsc --init
+# Using MySQL
+npm install sequelize sequelize-cli mysql2
 ```
+
+Initialize Sequelize
+
+```bash
+npx sequelize-cli init
+```
+
+Change config/config.json into config/config.js
+
+```javascript
+import dotenv from 'dotenv';
+dotenv.config(); // Load .env variables
+
+export default {
+  development: {
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    host: process.env.POSTGRES_HOST,
+    ssl: true,
+    dialectOptions: {
+      ssl: {
+        require: true
+      }
+    },
+    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    dialect: 'postgres',
+  },
+  test: {
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    host: process.env.POSTGRES_HOST,
+    ssl: true,
+    dialectOptions: {
+      ssl: {
+        require: true
+      }
+    },
+    dialect: 'postgres',
+  },
+  production: {
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    host: process.env.POSTGRES_HOST,
+    ssl: true,
+    dialectOptions: {
+      ssl: {
+        require: true
+      }
+    },
+    dialect: 'postgres',
+  },
+};
+```
+
+Create User models:
+
+```javascript
+export default {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('users', {
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
+      fullName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+      role_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'roles',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
+    });
+  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('users');
+  },
+};
+```
+
+For Sequelize you would need to create your own migration file, becasuse this is different than `TypeORM` and `Prisma`.
+Here is the command to generate migration file:
+
+```bash
+npx sequelize-cli migration:generate --name create-users-table
+```
+
+Now after you generate the migration file using the command above, now if you use `ES Module` rename the migration file `.js` into `.cjs`
+to avoid error when migrating.
+
+Here is the migration code:
+
+```javascript
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    await queryInterface.createTable('users', {
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
+      fullName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+    });
+  },
+
+  async down (queryInterface, Sequelize) {
+    await queryInterface.dropTable('users');
+  }
+};
+```
+
+## Nodemon
 
 Create a file called `nodemon.json` and copy this code
 
@@ -53,6 +224,7 @@ Create a file called `nodemon.json` and copy this code
 ## Features
 
 List the main features of your admin server. For example:
+
 - User authentication and authorization
 - CRUD operations for managing resources
 - Logging and monitoring
@@ -61,6 +233,7 @@ List the main features of your admin server. For example:
 ## Requirements
 
 Outline the prerequisites and dependencies needed to run your admin server. For example:
+
 - Node.js (version)
 - npm or yarn
 - Database (if applicable)
