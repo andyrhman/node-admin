@@ -1,15 +1,22 @@
-// import { Request, Response } from "express"
-// import { myDataSource } from "../index"
-// import { User } from "../entity/user.entity"
 // import { plainToClass } from "class-transformer";
 // import { CreateUserDTO } from "../validation/dto/create-user.dto";
 // import { isUUID, validate } from "class-validator";
 // import { formatValidationErrors } from "../utility/validation.utility";
 // import * as argon2 from "argon2"
-// import { Role } from "../entity/role.entity";
 // import { UpdateUserDTO } from "../validation/dto/update-user.dto";
 // import { UserService } from "../services/auth.service";
 // import sanitizeHtml from "sanitize-html";
+const { User } = require('../../models');
+
+const CreateUser = async (req, res) => {
+    try {
+        const { fullName, username, email, password, role_id } = req.body;
+        const user = await User.create({ fullName, username, email, password, role_id });
+        res.status(201).json(user);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
 
 // /**
 //  * @swagger
@@ -72,7 +79,7 @@
 //                 p => p.username.toLowerCase().indexOf(search2) >= 0 ||
 //                     p.email.toLowerCase().indexOf(search2) >= 0
 //             );
-    
+
 //             // Check if the resulting filtered data array is empty
 //             if (result.data.length === 0) {
 //                 // Respond with a 404 status code and a message
@@ -319,4 +326,6 @@
 
 //     res.status(204).send(null);
 // }
+
+module.exports = { CreateUser };
 

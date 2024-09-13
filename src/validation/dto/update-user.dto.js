@@ -1,4 +1,4 @@
-import { IsString, Length, IsEmail, IsOptional, IsInt } from 'class-validator';
+const { IsString, Length, IsEmail, IsOptional, IsInt } = require('class-validtor');
 
 export class UpdateUserDTO {
   @IsString({ message: 'Full name must be a string' })

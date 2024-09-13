@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from "class-validator";
+const { IsInt, IsNotEmpty, IsString } = require('class-validator');
 
 export class ProductCreateDto {
     @IsString({ message: "Title must be a string" })

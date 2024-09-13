@@ -1,5 +1,5 @@
 // ? https://www.phind.com/search?cache=aww4upilaldpb6wgjnpww7lu
-import { ArrayMinSize, ArrayNotEmpty, IsInt, IsNotEmpty, IsString } from "class-validator";
+const { ArrayMinSize, ArrayNotEmpty, IsInt, IsNotEmpty, IsString } = require('class-validator');
 
 export class UpdateRoleDTO{
     @IsNotEmpty({message: "Name is required"})

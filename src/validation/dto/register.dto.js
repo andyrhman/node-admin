@@ -1,5 +1,5 @@
-import { IsString, Length, IsEmail } from 'class-validator';
-import { IsEqualTo } from '../decorator/check-password.decorator';
+const { IsString, Length, IsEmail } = require('class-validator');
+const { IsEqualTo } = require('../decorator/check-password.decorator.js');
 
 export class RegisterDto {
   @IsString({ message: 'Full name must be a string' })

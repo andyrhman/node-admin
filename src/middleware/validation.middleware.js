@@ -1,6 +1,6 @@
-import { ValidationError } from 'class-validator';
+const { ValidationError } = require('class-validator');
 
-export const ValidationMiddleware = (err, req, res, next) => {
+const ValidationMiddleware = (err, req, res, next) => {
   if (Array.isArray(err) && err[0] instanceof ValidationError) {
     const formattedErrors = err.map(e => {
       const constraints = e.constraints;
@@ -15,3 +15,5 @@ export const ValidationMiddleware = (err, req, res, next) => {
 
   return next(err); // If not a validation error, pass it on
 };
+
+module.exports = { ValidationMiddleware }

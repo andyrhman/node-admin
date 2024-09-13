@@ -1,5 +1,3 @@
-import AppError from './apperror.js';
-
 const sendErrorDev = (err, res) => {
     console.error('ERROR 💥', err);
     res.status(err.statusCode).json({
@@ -28,4 +26,4 @@ const globalErrorHandler = (err, req, res, next) => {
     }
 };
 
-export default globalErrorHandler;
+module.exports = globalErrorHandler;

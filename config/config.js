@@ -1,7 +1,8 @@
-import dotenv from 'dotenv';
-dotenv.config(); // Load .env variables
+const dotenv = require('dotenv');
 
-export default {
+dotenv.config();
+
+module.exports = {
   development: {
     username: process.env.POSTGRES_USERNAME,
     password: process.env.POSTGRES_PASSWORD,
@@ -15,6 +16,7 @@ export default {
     },
     port: parseInt(process.env.POSTGRES_PORT || '5432'),
     dialect: 'postgres',
+    logging: false
   },
   test: {
     username: process.env.POSTGRES_USERNAME,

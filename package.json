@@ -4,14 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
-    "start": "node dist/index.js",
-    "build": "tsc",
-    "roles:seed": "ts-node src/seeder/role.seeder.ts",
-    "products:seed": "ts-node src/seeder/product.seeder.ts",
-    "orders:seed": "ts-node src/seeder/order.seeder.ts"
+    "dev": "nodemon src/index.js",
+    "start": "node dist/index.js"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",

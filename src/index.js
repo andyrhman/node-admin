@@ -1,14 +1,12 @@
-import dotenv from 'dotenv';
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import swaggerDocs from './utility/swagger.utitlity';
-import { routes } from './routes';
-import { ValidationMiddleware } from './middleware/validation.middleware';
-import { AppError } from "./utility/apperror.utility";
-import { globalErrorHandler } from "./middleware/error.middleware";
-
-dotenv.config();
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const { routes } = require('./routes.js');
+const { ValidationMiddleware } = require('./middleware/validation.middleware.js');
+const { AppError } = require('./utility/apperror.utility.js');
+const globalErrorHandler = require('./middleware/error.middleware.js');
+const swaggerDocs = require('./utility/swagger.utitlity.js');
 
 process.on('uncaughtException', (err) => {
     console.error('UNCAUGHT EXCEPTION! Continuing...');

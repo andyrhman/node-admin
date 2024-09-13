@@ -1,4 +1,4 @@
-import { IsString, Length, IsEmail, IsNotEmpty, IsInt } from 'class-validator';
+const { IsString, Length, IsEmail, IsNotEmpty, IsInt } = require('class-validator');
 
 export class CreateUserDTO {
   @IsString({ message: 'Full name must be a string' })

@@ -1,4 +1,4 @@
-import Joi from "joi";
+const Joi = require('joi');
 
 export const RegisterValidation = Joi.object({
     fullname: Joi.string().required().messages({

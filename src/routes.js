@@ -1,6 +1,11 @@
-import express from "express";
+const express = require('express');
+// import { CreateUser, ReadUser, UpdateUser, DeleteUser } from '../controllers/user.controller.js';
+const { CreateUser } = require('./controllers/user.controller.js')
 
-export const routes = (router) => {
+const routes = (router) => {
+    // Create a new user
+    router.post('/api/create', CreateUser);
+
     // router.post('/api/register', Register);
     // router.post('/api/login', Login);
     // router.get('/api/user', AuthMiddleware, AuthenticatedUser);
@@ -13,7 +18,7 @@ export const routes = (router) => {
     // router.get('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), GetUser);
     // router.put('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), UpdateUser);
     // router.delete('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), DeleteUser);
-    
+
     // router.get('/api/permissions', AuthMiddleware, Permissions);
 
     // router.get('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), Roles);
@@ -35,3 +40,5 @@ export const routes = (router) => {
     // router.post('/api/export', AuthMiddleware, PermissionMiddleware('orders'), Export);
     // router.get('/api/chart', AuthMiddleware, PermissionMiddleware('orders'), Chart);
 }
+
+module.exports = { routes };

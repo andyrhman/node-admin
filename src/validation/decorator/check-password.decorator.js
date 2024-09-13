@@ -1,4 +1,4 @@
-import { registerDecorator } from 'class-validator';
+const { registerDecorator } = require('class-validator');
 
 export function IsEqualTo(property, validationOptions) {
   return function (object, propertyName) {
