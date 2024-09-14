@@ -1,19 +1,30 @@
-const { IsInt, IsNotEmpty, IsString } = require('class-validator');
+const validator = require('validator');
 
-export class ProductCreateDto {
-    @IsString({ message: "Title must be a string" })
-    @IsNotEmpty()
-    title;
+class ProductCreateDto {
+    constructor(data) {
+        this.title = data.title;
+        this.description = data.description;
+        this.image = data.image;
+        this.price = data.price;
+    }
+    validate() {
+        let errors = [];
+        if (typeof this.title !== 'string' || validator.isEmpty(this.title)) {
+            errors.push('Title must be a string');
+        }
 
-    @IsString({ message: "Description must be a string" })
-    @IsNotEmpty()
-    description;
+        if (typeof this.description !== 'string' || validator.isEmpty(this.description)) {
+            errors.push('Description must be a string');
+        }
 
-    @IsString({ message: "Image must be a string" })
-    @IsNotEmpty()
-    image;
-
-    @IsInt({ message: "Price must be a Integer" })
-    @IsNotEmpty()
-    price
+        if (typeof this.image !== 'string' || validator.isEmpty(this.image)) {
+            errors.push('Image must be a string');
+        }
+        
+        if (typeof this.price !== 'number' || validator.isEmpty(this.price)) {
+            errors.push('Price must be a Integer');
+        }
+    }
 }
+
+module.exports = { ProductCreateDto };

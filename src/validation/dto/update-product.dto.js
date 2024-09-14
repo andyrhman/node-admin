@@ -1,19 +1,40 @@
-const { IsString, IsOptional, IsInt } = require('class-validator');
+const validator = require('validator');
 
-export class ProductUpdateDto {
-    @IsString({ message: "Title must be a string" })
-    @IsOptional()
-    title;
+class ProductUpdateDto {
+  constructor(data) {
+    this.title = data.title;
+    this.description = data.description;
+    this.image = data.image;
+    this.price = data.price;
+  }
 
-    @IsString({ message: "Description must be a string" })
-    @IsOptional()
-    description;
+  validate() {
+    let errors = [];
 
-    @IsString({ message: "Image must be a string" })
-    @IsOptional()
-    image;
+    // Title validation
+    if (this.title !== undefined && (typeof this.title !== 'string' || validator.isEmpty(this.title))) {
+      errors.push('Title must be a string and cannot be empty');
+    }
 
-    @IsInt({ message: "Price must be a string" })
-    @IsOptional()
-    price;
+    // Description validation
+    if (this.description !== undefined && (typeof this.description !== 'string' || validator.isEmpty(this.description))) {
+      errors.push('Description must be a string and cannot be empty');
+    }
+
+    // Image validation
+    if (this.image !== undefined && (typeof this.image !== 'string' || validator.isEmpty(this.image))) {
+      errors.push('Image must be a string and cannot be empty');
+    }
+
+    // Price validation (check if it's an integer)
+    if (this.price !== undefined && !validator.isInt(String(this.price))) {
+      errors.push('Price must be an integer');
+    }
+
+    if (errors.length > 0) {
+      throw new Error(errors.join(', '));
+    }
+  }
 }
+
+module.exports = { ProductUpdateDto };

@@ -1,27 +1,32 @@
-// import { Request, Response } from "express";
-// import { myDataSource } from "../index";
-// import { User } from "../entity/user.entity";
-// import { verify } from "jsonwebtoken";
+const { User, Role, Permission } = require('../../models');
+const { verify } = require('jsonwebtoken');
 
-// export const AuthMiddleware = async (req: Request, res: Response, next: Function) => {
-//     try {
-//         const jwt = req.cookies['user_session'];
+const AuthMiddleware = async (req, res, next) => {
+    try {
+        const jwt = req.cookies['user_session'];
 
-//         const payload: any = verify(jwt, process.env.JWT_SECRET);
+        const payload = verify(jwt, process.env.JWT_SECRET);
 
-//         if (!payload) {
-//             return res.status(401).send({
-//                 message: "Unauthenticated"
-//             });
-//         };
+        if (!payload) {
+            return res.status(401).send({
+                message: "Unauthenticated"
+            });
+        };
 
-//         const repository = myDataSource.getRepository(User);
-//         req["user"] = await repository.findOne({ where: { id: payload.id }, relations:['role', 'role.permissions']});
+        req["user"] = await User.findOne({
+            where: { id: payload.id },
+            include: [{
+                model: Role,
+                include: [Permission]
+            }]
+        });
 
-//         next();
-//     } catch (error) {
-//         return res.status(401).send({
-//             message: "Unauthenticated"
-//         });
-//     }
-// }
+        next();
+    } catch (error) {
+        return res.status(401).send({
+            message: "Unauthenticated"
+        });
+    }
+}
+
+module.exports = { AuthMiddleware };

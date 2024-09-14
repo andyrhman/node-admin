@@ -1,20 +1,40 @@
-const { IsString, Length, IsEmail, IsNotEmpty, IsInt } = require('class-validator');
+const validator = require('validator');
 
-export class CreateUserDTO {
-  @IsString({ message: 'Full name must be a string' })
-  @IsNotEmpty({message: "Full name should not be empty"})
-  fullname;
+class CreateUserDTO {
+  constructor(data) {
+    this.fullname = data.fullname;
+    this.username = data.username;
+    this.email = data.email;
+    this.role_id = data.role_id;
+  }
 
-  @IsString()
-  @IsNotEmpty({message: "Full name should not be empty"})
-  @Length(3, 30, { message: 'Username must be between 3 and 30 characters' })
-  username;
+  validate() {
+    let errors = [];
 
-  @IsEmail({}, { message: 'Email must be a valid email address' })
-  @IsNotEmpty({message: "Full name should not be empty"})
-  email;
+    // Fullname validation (check if it's a string and not empty)
+    if (typeof this.fullname !== 'string' || validator.isEmpty(this.fullname)) {
+      errors.push('Full name must be a string and cannot be empty');
+    }
 
-  @IsInt({ message: 'Role must be a integer' })
-  @IsNotEmpty({message: "Full name should not be empty"})
-  role_id;
+    // Username validation (check if it's a string and within the required length)
+    if (typeof this.username !== 'string' || !validator.isLength(this.username, { min: 3, max: 30 })) {
+      errors.push('Username must be between 3 and 30 characters');
+    }
+
+    // Email validation (using validator.js)
+    if (!validator.isEmail(this.email)) {
+      errors.push('Email must be a valid email address');
+    }
+
+    // Role ID validation (must be an integer)
+    if (typeof this.role_id !== 'number' || validator.isEmpty(this.role_id)) {
+      errors.push('Role must be an integer');
+    }
+
+    if (errors.length > 0) {
+      throw new Error(errors.join(', '));
+    }
+  }
 }
+
+module.exports = { CreateUserDTO };

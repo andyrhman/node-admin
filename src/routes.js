@@ -1,17 +1,14 @@
 const express = require('express');
-// import { CreateUser, ReadUser, UpdateUser, DeleteUser } from '../controllers/user.controller.js';
-const { CreateUser } = require('./controllers/user.controller.js')
+const { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } = require('./controllers/auth.controller.js');
+const { AuthMiddleware } = require('./middleware/auth.middleware.js');
 
 const routes = (router) => {
-    // Create a new user
-    router.post('/api/create', CreateUser);
-
-    // router.post('/api/register', Register);
-    // router.post('/api/login', Login);
-    // router.get('/api/user', AuthMiddleware, AuthenticatedUser);
-    // router.post('/api/logout', AuthMiddleware, Logout);
-    // router.put('/api/user/info', AuthMiddleware, UpdateInfo);
-    // router.put('/api/user/password', AuthMiddleware, UpdatePassword);
+    router.post('/api/register', Register);
+    router.post('/api/login', Login);
+    router.get('/api/user', AuthMiddleware, AuthenticatedUser);
+    router.post('/api/logout', AuthMiddleware, Logout);
+    router.put('/api/user/info', AuthMiddleware, UpdateInfo);
+    router.put('/api/user/password', AuthMiddleware, UpdatePassword);
 
     // router.get('/api/users', AuthMiddleware, PermissionMiddleware('users'), Users);
     // router.post('/api/users', AuthMiddleware, PermissionMiddleware('users'), CreateUser);

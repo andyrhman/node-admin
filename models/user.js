@@ -7,7 +7,11 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       User.belongsTo(models.Role, { foreignKey: 'role_id' });
-
+    }
+    toJSON() {
+      const attributes = { ...this.get() };
+      delete attributes.password;
+      return attributes;
     }
   };
 
@@ -36,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     createdAt: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+    },
+    updatedAt: {
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW,
     },

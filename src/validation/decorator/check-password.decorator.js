@@ -1,6 +1,6 @@
 const { registerDecorator } = require('class-validator');
 
-export function IsEqualTo(property, validationOptions) {
+function IsEqualTo(property, validationOptions) {
   return function (object, propertyName) {
     registerDecorator({
       name: 'isEqualTo',
@@ -18,3 +18,5 @@ export function IsEqualTo(property, validationOptions) {
     });
   };
 }
+
+module.exports = { IsEqualTo };

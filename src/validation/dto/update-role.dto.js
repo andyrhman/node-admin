@@ -1,13 +1,34 @@
-// ? https://www.phind.com/search?cache=aww4upilaldpb6wgjnpww7lu
-const { ArrayMinSize, ArrayNotEmpty, IsInt, IsNotEmpty, IsString } = require('class-validator');
+const validator = require('validator');
 
-export class UpdateRoleDTO{
-    @IsNotEmpty({message: "Name is required"})
-    @IsString({message: "Name must be a string"})
-    name;
+class UpdateRoleDTO {
+  constructor(data) {
+    this.name = data.name;
+    this.permissions = data.permissions;
+  }
 
-    @ArrayNotEmpty({ message: 'Permissions is required' })
-    @ArrayMinSize(1, { message: 'Permissions should have at least 1 item' })
-    @IsInt({each: true, message: 'Permissions must be a number'})
-    permissions;
+  validate() {
+    let errors = [];
+
+    // Name validation
+    if (typeof this.name !== 'string' || validator.isEmpty(this.name)) {
+      errors.push('Name is required and must be a string');
+    }
+
+    // Permissions validation (array of integers, at least 1 item)
+    if (!Array.isArray(this.permissions) || this.permissions.length === 0) {
+      errors.push('Permissions is required and should have at least 1 item');
+    } else {
+      this.permissions.forEach(permission => {
+        if (!validator.isInt(String(permission))) {
+          errors.push('Permissions must be numbers');
+        }
+      });
+    }
+
+    if (errors.length > 0) {
+      throw new Error(errors.join(', '));
+    }
+  }
 }
+
+module.exports = { UpdateRoleDTO };

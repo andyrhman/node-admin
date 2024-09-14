@@ -10,10 +10,12 @@ module.exports = (sequelize, DataTypes) => {
         through: 'role_permissions',
         foreignKey: 'permission_id',
         otherKey: 'role_id',
+        timestamps: false
+
       });
     }
   };
-  
+
   Permission.init({
     id: {
       type: Sequelize.INTEGER,
@@ -23,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
+    },
+    createdAt: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+    },
+    updatedAt: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
     },
   }, {
     sequelize,
