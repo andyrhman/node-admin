@@ -1,6 +1,8 @@
 const express = require('express');
 const { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } = require('./controllers/auth.controller.js');
+const { Roles, CreateRole, GetRole, UpdateRole, DeleteRole } = require('./controllers/role.controller.js')
 const { AuthMiddleware } = require('./middleware/auth.middleware.js');
+const { PermissionMiddleware } = require('./middleware/permission.middleware.js');
 
 const routes = (router) => {
     router.post('/api/register', Register);
@@ -18,11 +20,11 @@ const routes = (router) => {
 
     // router.get('/api/permissions', AuthMiddleware, Permissions);
 
-    // router.get('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), Roles);
-    // router.post('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), CreateRole);
-    // router.get('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), GetRole);
-    // router.put('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), UpdateRole);
-    // router.delete('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), DeleteRole);
+    router.get('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), Roles);
+    router.post('/api/roles', AuthMiddleware, PermissionMiddleware('roles'), CreateRole);
+    router.get('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), GetRole);
+    router.put('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), UpdateRole);
+    router.delete('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), DeleteRole);
 
     // router.get('/api/products', AuthMiddleware, PermissionMiddleware('products'), Products);
     // router.post('/api/products', AuthMiddleware, PermissionMiddleware('products'), CreateProduct);

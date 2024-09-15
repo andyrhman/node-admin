@@ -17,7 +17,12 @@ const AuthMiddleware = async (req, res, next) => {
             where: { id: payload.id },
             include: [{
                 model: Role,
-                include: [Permission]
+                include: [
+                    {
+                        model: Permission,
+                        through: { attributes: [] }
+                    }
+                ]
             }]
         });
 

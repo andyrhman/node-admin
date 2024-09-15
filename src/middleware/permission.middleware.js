@@ -1,26 +1,25 @@
-// import {Request, Response} from "express";
-// import {User} from "../entity/user.entity";
+const PermissionMiddleware = (access) => {
+    return (req, res, next) => {
+        const user = req['user'];
 
-// export const PermissionMiddleware = (access: string) => {
-//     return (req: Request, res: Response, next: Function) => {
-//         const user: User = req['user'];
+        const permissions = user.Role.Permissions;
 
-//         const permissions = user.role.permissions;
+        if (req.method === 'GET') {
+            if (!permissions.some(p => (p.name === `view_${access}`) || (p.name === `edit_${access}`))) {
+                return res.status(403).send({
+                    message: 'Unauthorized'
+                })
+            }
+        } else {
+            if (!permissions.some(p => p.name === `edit_${access}`)) {
+                return res.status(403).send({
+                    message: 'Unauthorized'
+                })
+            }
+        }
 
-//         if (req.method === 'GET') {
-//             if (!permissions.some(p => (p.name === `view_${access}`) || (p.name === `edit_${access}`))) {
-//                 return res.status(403).send({
-//                     message: 'Unauthorized'
-//                 })
-//             }
-//         } else {
-//             if (!permissions.some(p => p.name === `edit_${access}`)) {
-//                 return res.status(403).send({
-//                     message: 'Unauthorized'
-//                 })
-//             }
-//         }
+        next();
+    }
+}
 
-//         next();
-//     }
-// }
+module.exports = { PermissionMiddleware }

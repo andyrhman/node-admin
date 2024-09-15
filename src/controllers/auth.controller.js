@@ -4,7 +4,6 @@ const { UserService } = require('../services/user.service.js');
 const { formatValidationErrors } = require('../utility/validation.utility.js');
 const { UpdateInfoDTO } = require('../validation/dto/update-info.dto.js');
 const { sign } = require('jsonwebtoken');
-
 const argon2 = require('argon2');
 
 // ? https://www.phind.com/agent?cache=clr3id9pk0002l907s609rc5r&source=sidebar
