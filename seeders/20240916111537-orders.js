@@ -16,21 +16,17 @@ module.exports = {
         id: orderId, // UUID for Order
         name: faker.person.fullName(),
         email: faker.internet.email(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date()
       });
 
-      // Generate random order items for this order
-      const numberOfItems = randomInt(1, 5); // Random number of items between 1 and 4
-      for (let j = 0; j < numberOfItems; j++) {
+      for (let j = 0; j < randomInt(1, 5); j++) {
         orderItems.push({
           id: uuidv4(), // UUID for OrderItem
-          orderId: orderId, // Link to the order
+          order_id: orderId, // Link to the order
           product_title: faker.commerce.productName(),
           price: parseInt(faker.commerce.price({ min: 100, max: 1000, dec: 0 }), 10),
           quantity: randomInt(1, 5), // Random quantity between 1 and 4
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: new Date()
         });
       }
     }
@@ -45,11 +41,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.bulkDelete('order_items', null, {});
+    await queryInterface.bulkDelete('orders', null, {});
   }
 };

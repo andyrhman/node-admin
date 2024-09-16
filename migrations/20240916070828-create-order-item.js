@@ -21,6 +21,9 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      createdAt: {
+        type: Sequelize.DATE
+      },
       order_id: {
         type: Sequelize.UUID,
         references: {

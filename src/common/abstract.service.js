@@ -46,15 +46,12 @@ class AbstractService {
         const offset = (page - 1) * limit;
         const options = {
             limit,
-            offset
+            offset,
+            include: relations // Ensure that this is passed correctly as an array
         };
-
-        if (relations.length > 0) {
-            options.include = relations;
-        }
-
+    
         const { rows: data, count: total } = await this.model.findAndCountAll(options);
-
+    
         return {
             data,
             meta: {
@@ -64,6 +61,7 @@ class AbstractService {
             }
         };
     }
+    
 
 }
 

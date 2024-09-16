@@ -6,7 +6,8 @@
       "coverage/"
     ],
     "watch": [
-      "src/*"
+      "src/*",
+      "models/*"
     ],
     "ext": "js,json,ts"
   }

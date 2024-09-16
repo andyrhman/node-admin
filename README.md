@@ -8,6 +8,12 @@
 
 Provide a brief overview of your Node.js admin server, explaining its purpose and key features.
 
+## Read this for understanding relation
+
+Here is the example of One-to-Many and One-to-One relation
+
+[Click Me!](https://chatgpt.com/share/66e80f4a-6270-8011-ac4c-4609d1d1dbf4)
+
 ## First Time Set Up & Configuration
 
 Create the directory:
@@ -46,7 +52,7 @@ npx sequelize-cli init
 Change `config/config.json` into `config/config.js`
 
 ```javascript
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 
 dotenv.config();
 module.exports = {
@@ -58,39 +64,39 @@ module.exports = {
     ssl: true,
     dialectOptions: {
       ssl: {
-        require: true
-      }
+        require: true,
+      },
     },
-    port: parseInt(process.env.POSTGRES_PORT || '5432'),
-    dialect: 'postgres',
+    port: parseInt(process.env.POSTGRES_PORT || "5432"),
+    dialect: "postgres",
   },
   test: {
     username: process.env.POSTGRES_USERNAME,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
-    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    port: parseInt(process.env.POSTGRES_PORT || "5432"),
     host: process.env.POSTGRES_HOST,
     ssl: true,
     dialectOptions: {
       ssl: {
-        require: true
-      }
+        require: true,
+      },
     },
-    dialect: 'postgres',
+    dialect: "postgres",
   },
   production: {
     username: process.env.POSTGRES_USERNAME,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
-    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    port: parseInt(process.env.POSTGRES_PORT || "5432"),
     host: process.env.POSTGRES_HOST,
     ssl: true,
     dialectOptions: {
       ssl: {
-        require: true
-      }
+        require: true,
+      },
     },
-    dialect: 'postgres',
+    dialect: "postgres",
   },
 };
 ```
@@ -104,62 +110,62 @@ npx sequelize-cli model:generate --name user --attributes username:string,passwo
 ```
 
 ```javascript
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      User.belongsTo(models.Role, { foreignKey: 'role_id' });
-
+      User.belongsTo(models.Role, { foreignKey: "role_id" });
     }
-  };
+  }
 
-  User.init({
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    fullName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-  }, {
-    sequelize,
-    modelName: 'User',
-    tableName: 'users',
-    hooks: {
-      beforeCreate: (user) => {
-        user.email = user.email.toLowerCase();
-        user.username = user.username.toLowerCase();
+  User.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
       },
-      beforeUpdate: (user) => {
-        user.email = user.email.toLowerCase();
-        user.username = user.username.toLowerCase();
+      fullName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
-  });
+    {
+      sequelize,
+      modelName: "User",
+      tableName: "users",
+      hooks: {
+        beforeCreate: (user) => {
+          user.email = user.email.toLowerCase();
+          user.username = user.username.toLowerCase();
+        },
+        beforeUpdate: (user) => {
+          user.email = user.email.toLowerCase();
+          user.username = user.username.toLowerCase();
+        },
+      },
+    }
+  );
 
   return Role;
 };
@@ -176,12 +182,12 @@ npx sequelize-cli migration:generate --name create-users-table
 Here is the migration code:
 
 ```javascript
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("users", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -216,9 +222,9 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("users");
+  },
 };
 ```
 
@@ -240,27 +246,16 @@ After you have done coded the seeder run this command:
 npx sequelize-cli db:seed --seed 20240913082700-roles-permissions.js
 ```
 
-Here is the example of One-to-Many and One-to-One relation
-
-[Click Me!](https://chatgpt.com/share/66e80f4a-6270-8011-ac4c-4609d1d1dbf4)
-
 ## Nodemon
 
 Create a file called `nodemon.json` and copy this code
 
 ```json
 {
-    "ignore": [
-      ".git",
-      "node_modules/",
-      "dist/",
-      "coverage/"
-    ],
-    "watch": [
-      "src/*"
-    ],
-    "ext": "js,json,ts"
-  }
+  "ignore": [".git", "node_modules/", "dist/", "coverage/"],
+  "watch": ["src/*"],
+  "ext": "js,json,ts"
+}
 ```
 
 ## Features
@@ -288,3 +283,4 @@ Provide step-by-step instructions for installing and setting up the project loca
 git clone https://github.com/andyrhman/node-admin.git
 cd node-admin
 npm install
+```

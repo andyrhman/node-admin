@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.UUID,
       allowNull: false,
     },
-    created_at: {
+    createdAt: {
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW,
       allowNull: false,

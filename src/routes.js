@@ -4,6 +4,7 @@ const { Roles, CreateRole, GetRole, UpdateRole, DeleteRole } = require('./contro
 const { Permissions, AddRolePermissions, RemoveRolePermissions } = require('./controllers/permission.controller.js');
 const { Users, CreateUser, GetUser, UpdateUser, DeleteUser } = require('./controllers/user.controller.js');
 const { CreateProduct, Products, GetProduct, UpdateProduct, DeleteProduct } = require('./controllers/product.controller.js');
+const { Orders, Export, Chart } = require('./controllers/order.controller.js');
 const { AuthMiddleware } = require('./middleware/auth.middleware.js');
 const { PermissionMiddleware } = require('./middleware/permission.middleware.js');
 
@@ -40,9 +41,9 @@ const routes = (router) => {
     // router.post('/api/upload', AuthMiddleware, Upload);
     // router.use('/api/uploads', express.static('./uploads'));
 
-    // router.get('/api/orders', AuthMiddleware, PermissionMiddleware('orders'), Orders);
-    // router.post('/api/export', AuthMiddleware, PermissionMiddleware('orders'), Export);
-    // router.get('/api/chart', AuthMiddleware, PermissionMiddleware('orders'), Chart);
+    router.get('/api/orders', AuthMiddleware, PermissionMiddleware('orders'), Orders);
+    router.post('/api/export', AuthMiddleware, PermissionMiddleware('orders'), Export);
+    router.get('/api/chart', AuthMiddleware, PermissionMiddleware('orders'), Chart);
 }
 
 module.exports = { routes };
