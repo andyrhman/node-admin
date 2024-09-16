@@ -42,14 +42,18 @@ class AbstractService {
         });
     }
 
-    async paginate(page, limit, options = {}, relations = []) {
+    async paginate(page, limit, relations = []) {
         const offset = (page - 1) * limit;
-        const { rows: data, count: total } = await this.model.findAndCountAll({
-            where: options,
-            include: relations,
+        const options = {
             limit,
             offset
-        });
+        };
+
+        if (relations.length > 0) {
+            options.include = relations;
+        }
+
+        const { rows: data, count: total } = await this.model.findAndCountAll(options);
 
         return {
             data,
@@ -60,6 +64,7 @@ class AbstractService {
             }
         };
     }
+
 }
 
 module.exports = AbstractService;

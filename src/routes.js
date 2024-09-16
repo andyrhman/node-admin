@@ -1,7 +1,8 @@
 const express = require('express');
 const { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } = require('./controllers/auth.controller.js');
 const { Roles, CreateRole, GetRole, UpdateRole, DeleteRole } = require('./controllers/role.controller.js');
-const { Permissions, AddRolePermissions, RemoveRolePermissions } = require('./controllers/permission.controller.js')
+const { Permissions, AddRolePermissions, RemoveRolePermissions } = require('./controllers/permission.controller.js');
+const { Users, CreateUser, GetUser, UpdateUser, DeleteUser } = require('./controllers/user.controller.js')
 const { AuthMiddleware } = require('./middleware/auth.middleware.js');
 const { PermissionMiddleware } = require('./middleware/permission.middleware.js');
 
@@ -13,11 +14,11 @@ const routes = (router) => {
     router.put('/api/user/info', AuthMiddleware, UpdateInfo);
     router.put('/api/user/password', AuthMiddleware, UpdatePassword);
 
-    // router.get('/api/users', AuthMiddleware, PermissionMiddleware('users'), Users);
-    // router.post('/api/users', AuthMiddleware, PermissionMiddleware('users'), CreateUser);
-    // router.get('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), GetUser);
-    // router.put('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), UpdateUser);
-    // router.delete('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), DeleteUser);
+    router.get('/api/users', AuthMiddleware, PermissionMiddleware('users'), Users);
+    router.post('/api/users', AuthMiddleware, PermissionMiddleware('users'), CreateUser);
+    router.get('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), GetUser);
+    router.put('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), UpdateUser);
+    router.delete('/api/users/:id', AuthMiddleware, PermissionMiddleware('users'), DeleteUser);
 
     router.get('/api/permissions', AuthMiddleware, Permissions);
     router.put('/api/permissions/new', AuthMiddleware, AddRolePermissions);

@@ -27,8 +27,8 @@ class CreateUserDTO {
     }
 
     // Role ID validation (must be an integer)
-    if (typeof this.role_id !== 'number' || validator.isEmpty(this.role_id)) {
-      errors.push('Role must be an integer');
+    if (!Number.isInteger(this.role_id)) {
+      errors.push('Role is invalid');
     }
 
     if (errors.length > 0) {
