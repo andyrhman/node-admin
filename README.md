@@ -240,6 +240,10 @@ After you have done coded the seeder run this command:
 npx sequelize-cli db:seed --seed 20240913082700-roles-permissions.js
 ```
 
+Here is the example of One-to-Many and One-to-One relation
+
+[Click Me!](https://chatgpt.com/share/66e80f4a-6270-8011-ac4c-4609d1d1dbf4)
+
 ## Nodemon
 
 Create a file called `nodemon.json` and copy this code

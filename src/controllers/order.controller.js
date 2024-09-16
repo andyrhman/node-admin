@@ -39,7 +39,10 @@
 //     let search = req.query.search;
 
 //     let result = await repository.paginate({}, page, take, ['order_item']);
-
+// let result = await repository.paginate(page, take, [
+//     { model: Profile },   // Assuming User has a Profile relation
+//     { model: Role }       // Assuming User has a Role relation
+// ]);
 //     // https://www.phind.com/search?cache=za3cyqzb06bugle970v91phl
 //     if (typeof search === 'string') {
 //         search = sanitizeHtml(search);

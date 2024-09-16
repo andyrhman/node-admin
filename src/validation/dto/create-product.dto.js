@@ -21,7 +21,7 @@ class ProductCreateDto {
             errors.push('Image must be a string');
         }
         
-        if (typeof this.price !== 'number' || validator.isEmpty(this.price)) {
+        if (!Number.isInteger(this.price)) {
             errors.push('Price must be a Integer');
         }
     }

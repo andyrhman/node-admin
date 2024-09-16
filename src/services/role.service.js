@@ -1,9 +1,10 @@
-// import { AbstractService } from "../common/abstract.service";
-// import { Role } from "../entity/role.entity";
-// import { myDataSource } from "../index";
+const AbstractService = require('../common/abstract.service.js');
+const { Role } = require('../../models');
 
-// export class RoleService extends AbstractService<Role> {
-//     constructor() {
-//         super(myDataSource.getRepository(Role));
-//     }
-// }
+class RoleService extends AbstractService {
+    constructor() {
+        super(Role);
+    }
+}
+
+module.exports = { RoleService };

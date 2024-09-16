@@ -2,7 +2,8 @@ const express = require('express');
 const { Register, Login, AuthenticatedUser, Logout, UpdateInfo, UpdatePassword } = require('./controllers/auth.controller.js');
 const { Roles, CreateRole, GetRole, UpdateRole, DeleteRole } = require('./controllers/role.controller.js');
 const { Permissions, AddRolePermissions, RemoveRolePermissions } = require('./controllers/permission.controller.js');
-const { Users, CreateUser, GetUser, UpdateUser, DeleteUser } = require('./controllers/user.controller.js')
+const { Users, CreateUser, GetUser, UpdateUser, DeleteUser } = require('./controllers/user.controller.js');
+const { CreateProduct, Products, GetProduct, UpdateProduct, DeleteProduct } = require('./controllers/product.controller.js');
 const { AuthMiddleware } = require('./middleware/auth.middleware.js');
 const { PermissionMiddleware } = require('./middleware/permission.middleware.js');
 
@@ -30,11 +31,11 @@ const routes = (router) => {
     router.put('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), UpdateRole);
     router.delete('/api/roles/:id', AuthMiddleware, PermissionMiddleware('roles'), DeleteRole);
 
-    // router.get('/api/products', AuthMiddleware, PermissionMiddleware('products'), Products);
-    // router.post('/api/products', AuthMiddleware, PermissionMiddleware('products'), CreateProduct);
-    // router.get('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), GetProduct);
-    // router.put('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), UpdateProduct);
-    // router.delete('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), DeleteProduct);
+    router.get('/api/products', AuthMiddleware, PermissionMiddleware('products'), Products);
+    router.post('/api/products', AuthMiddleware, PermissionMiddleware('products'), CreateProduct);
+    router.get('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), GetProduct);
+    router.put('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), UpdateProduct);
+    router.delete('/api/products/:id', AuthMiddleware, PermissionMiddleware('products'), DeleteProduct);
 
     // router.post('/api/upload', AuthMiddleware, Upload);
     // router.use('/api/uploads', express.static('./uploads'));
